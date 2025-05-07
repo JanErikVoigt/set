@@ -51,7 +51,7 @@ export function getFeatureGUIDs (feature: Feature<Geometry>): string[] {
     case FeatureType.Signal:
       const signalData = getFeatureData(feature) as SignalMount | Signal
       if ('attachedSignals' in signalData) {
-        return signalData.attachedSignals.map(s => s.guid)
+        return signalData.attachedSignals.map(s => s.guid).concat([signalData.guid])
       }
 
       if ('system' in signalData) {
