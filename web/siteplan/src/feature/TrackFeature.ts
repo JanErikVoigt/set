@@ -17,6 +17,7 @@ import TrackSegment, { TrackType } from '@/model/TrackSegment'
 import { PlanProModelType, store } from '@/store'
 import Configuration from '@/util/Configuration'
 import { getMapScale } from '@/util/MapScale'
+import { midpoint, negative_vec, normalized_direction, orth_to_vec2d, sum_vec } from '@/util/Math'
 import { compare, getpropertypeName } from '@/util/ObjectExtension'
 import { Feature } from 'ol'
 import { Coordinate as OlCoordinate } from 'ol/coordinate'
@@ -164,7 +165,39 @@ export default class TrackFeature extends LageplanFeature<Track> {
       }
     })
 
-    const feature = createFeature(FeatureType.Track, data, new LineString(coordinates), track.designations?.at(0)?.name)
+    // TODO const head_size = 0.6 // units in coordinate system
+    const coordinates_with_arrow = []
+
+    // zip coordinates and coordinates.skip(1) "by hand"
+    for (let i = 0; i < coordinates.length - 1;i++) {
+      coordinates_with_arrow.push(coordinates[i])
+
+      const arrow_head_root = midpoint(coordinates[i],coordinates[i + 1]) // ,0.67
+      const arrow_direction = normalized_direction(coordinates[i],coordinates[i + 1])
+
+      if (arrow_direction != undefined) { // otherwise, length of segment is zero -> no need to draw direction.
+        const arrow_direction_orth = orth_to_vec2d(arrow_direction)!
+        // orth cant be undefined, as len of dir is equal to 1.
+
+        const arrow_head_back = [
+          arrow_head_root[0] - arrow_direction[0] * 2.0,
+          arrow_head_root[1] - arrow_direction[1] * 2.0
+        ]
+
+        const arrow_point_1 =  sum_vec(arrow_head_back,arrow_direction_orth)
+        const arrow_point_2 =  sum_vec(arrow_head_back,negative_vec(arrow_direction_orth))
+
+        coordinates_with_arrow.push(arrow_head_root)
+        coordinates_with_arrow.push(arrow_point_1)
+        coordinates_with_arrow.push(arrow_point_2)
+        coordinates_with_arrow.push(arrow_head_root)
+      }
+
+      coordinates_with_arrow.push(coordinates[i + 1])
+      // i ----|>---- i+1
+    }
+
+    const feature = createFeature(FeatureType.Track, data, new LineString(coordinates_with_arrow), track.designations?.at(0)?.name)
 
     if (trackSegment.type === undefined) {
       trackSegment.type = []
