@@ -17,10 +17,10 @@ import TrackSegment, { TrackType } from '@/model/TrackSegment'
 import { PlanProModelType, store } from '@/store'
 import Configuration from '@/util/Configuration'
 import { getMapScale } from '@/util/MapScale'
-import { midpoint, negative_vec, normalized_direction, orth_to_vec2d, sum_vec } from '@/util/Math'
+import { negative_vec, normalized_direction, orth_to_vec2d, scale_vec, sum_vec } from '@/util/Math'
 import { compare, getpropertypeName } from '@/util/ObjectExtension'
 import { Feature } from 'ol'
-import { Coordinate as OlCoordinate } from 'ol/coordinate'
+import { distance, Coordinate as OlCoordinate } from 'ol/coordinate'
 import { LineString } from 'ol/geom'
 import Geometry from 'ol/geom/Geometry'
 import Polygon from 'ol/geom/Polygon'
@@ -165,36 +165,75 @@ export default class TrackFeature extends LageplanFeature<Track> {
       }
     })
 
-    // TODO const head_size = 0.6 // units in coordinate system
+    // Display direction of edges:
+
+    const HEAD_WIDTH = 0.4 // units in coordinate system
+    const HEAD_LENGTH = 1.0 // units in coordinate system
+    const MIN_EDGE_DIR_SPACING = 40
     let coordinates_with_arrow = []
 
     if (!store.state.showTopologicalEdgeDirections) {
       coordinates_with_arrow = coordinates
     } else {
+      // find length and add
+      let sum_length = 0.0
+      for (let i = 0; i < coordinates.length - 1;i++) {
+        sum_length += distance(coordinates[i],coordinates[i + 1])
+      }
+
+      let arrowhead_spacing = 100
+      let next_arrowhead_in = 0.0
+      let arrowheads_remaining = 1
+
+      // if edge is short ,draw exactly one arrowhead in the middle of the segment
+      if (sum_length < 2 * MIN_EDGE_DIR_SPACING) {
+        next_arrowhead_in = sum_length / 2.0
+        arrowheads_remaining = 1
+        arrowhead_spacing = 0.0 // doesnt matter
+      } else {
+        // otherwise, evenly space them on edge.
+        arrowheads_remaining = Math.floor(sum_length / MIN_EDGE_DIR_SPACING)
+        arrowhead_spacing = MIN_EDGE_DIR_SPACING
+        next_arrowhead_in = (sum_length - arrowhead_spacing * (arrowheads_remaining - 1)) / 2.0
+      }
+
       // zip coordinates and coordinates.skip(1) "by hand"
       for (let i = 0; i < coordinates.length - 1;i++) {
         coordinates_with_arrow.push(coordinates[i])
 
-        const arrow_head_root = midpoint(coordinates[i],coordinates[i + 1]) // ,0.67
-        const arrow_direction = normalized_direction(coordinates[i],coordinates[i + 1])
+        const len_of_this_segment = distance(coordinates[i],coordinates[i + 1])
+        let len_remaining = len_of_this_segment
+        let accumulated_arrow_dist = 0.0
+        while (next_arrowhead_in < len_remaining && arrowheads_remaining > 0) {
+          const arrow_direction = normalized_direction(coordinates[i],coordinates[i + 1])
 
-        if (arrow_direction != undefined) { // otherwise, length of segment is zero -> no need to draw direction.
-          const arrow_direction_orth = orth_to_vec2d(arrow_direction)!
-          // orth cant be undefined, as len of dir is equal to 1.
+          if (arrow_direction != undefined) { // otherwise, length of segment is zero -> no need to draw direction.
+            const arrow_head_root = sum_vec(coordinates[i],scale_vec(arrow_direction!, next_arrowhead_in + accumulated_arrow_dist) ) // TODO accumulated_arrow_dist
+            // ... draw arrow head ...
+            const arrow_direction_orth = orth_to_vec2d(arrow_direction)!
+            // orth cant be undefined, as len of dir is equal to 1.
 
-          const arrow_head_back = [
-            arrow_head_root[0] - arrow_direction[0] * 2.0,
-            arrow_head_root[1] - arrow_direction[1] * 2.0
-          ]
+            const arrow_head_back = [
+              arrow_head_root[0] - arrow_direction[0] * HEAD_LENGTH,
+              arrow_head_root[1] - arrow_direction[1] * HEAD_LENGTH
+            ]
 
-          const arrow_point_1 =  sum_vec(arrow_head_back,arrow_direction_orth)
-          const arrow_point_2 =  sum_vec(arrow_head_back,negative_vec(arrow_direction_orth))
+            const arrow_point_1 =  sum_vec(arrow_head_back,scale_vec(arrow_direction_orth,HEAD_WIDTH))
+            const arrow_point_2 =  sum_vec(arrow_head_back,negative_vec(scale_vec(arrow_direction_orth,HEAD_WIDTH)))
 
-          coordinates_with_arrow.push(arrow_head_root)
-          coordinates_with_arrow.push(arrow_point_1)
-          coordinates_with_arrow.push(arrow_point_2)
-          coordinates_with_arrow.push(arrow_head_root)
+            coordinates_with_arrow.push(arrow_head_root)
+            coordinates_with_arrow.push(arrow_point_1)
+            coordinates_with_arrow.push(arrow_point_2)
+            coordinates_with_arrow.push(arrow_head_root)
+          }
+
+          len_remaining -= next_arrowhead_in
+          accumulated_arrow_dist += next_arrowhead_in
+          next_arrowhead_in = arrowhead_spacing
+          arrowheads_remaining -= 1
         }
+
+        next_arrowhead_in -= len_remaining
 
         coordinates_with_arrow.push(coordinates[i + 1])
       // i ----|>---- i+1

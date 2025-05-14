@@ -157,7 +157,7 @@ export function orth_to_vec2d (v:number[]): number[] | undefined {
  * @param b second vector
  * @returns the sum of both vectors ("elementwise sum")
  */
-export function sum_vec (a:number[], b:number[]): number[] | undefined {
+export function sum_vec (a:number[], b:number[]): number[] {
   const result = []
   for (let i = 0; i < Math.min(a.length,b.length); i++) {
     result.push(b[i] + a[i])
@@ -178,3 +178,16 @@ export function negative_vec (v:number[]): number[] {
   return result
 }
 
+/**
+ * scalar multiplication of a vector of any dimension
+ * @param v vector
+ * @param s scalar
+ * @returns v * s
+ */
+export function scale_vec (v:number[], s: number): number[] {
+  const result = []
+  for (let i = 0; i < v.length; i++) {
+    result.push(v[i] * s)
+  }
+  return result
+}
