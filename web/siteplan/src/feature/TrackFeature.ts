@@ -167,80 +167,14 @@ export default class TrackFeature extends LageplanFeature<Track> {
 
     // Display direction of edges:
 
-    const HEAD_WIDTH = 0.4 // units in coordinate system
-    const HEAD_LENGTH = 1.0 // units in coordinate system
-    const MIN_EDGE_DIR_SPACING = 40
-    let coordinates_with_arrow = []
-
-    if (!store.state.showTopologicalEdgeDirections) {
-      coordinates_with_arrow = coordinates
+    let coordinates_with_arrows
+    if (store.state.showTopologicalEdgeDirections) {
+      coordinates_with_arrows = this.add_arrowheads_to_track(coordinates)
     } else {
-      // find length and add
-      let sum_length = 0.0
-      for (let i = 0; i < coordinates.length - 1;i++) {
-        sum_length += distance(coordinates[i],coordinates[i + 1])
-      }
-
-      let arrowhead_spacing = 100
-      let next_arrowhead_in = 0.0
-      let arrowheads_remaining = 1
-
-      // if edge is short ,draw exactly one arrowhead in the middle of the segment
-      if (sum_length < 2 * MIN_EDGE_DIR_SPACING) {
-        next_arrowhead_in = sum_length / 2.0
-        arrowheads_remaining = 1
-        arrowhead_spacing = 0.0 // doesnt matter
-      } else {
-        // otherwise, evenly space them on edge.
-        arrowheads_remaining = Math.floor(sum_length / MIN_EDGE_DIR_SPACING)
-        arrowhead_spacing = MIN_EDGE_DIR_SPACING
-        next_arrowhead_in = (sum_length - arrowhead_spacing * (arrowheads_remaining - 1)) / 2.0
-      }
-
-      // zip coordinates and coordinates.skip(1) "by hand"
-      for (let i = 0; i < coordinates.length - 1;i++) {
-        coordinates_with_arrow.push(coordinates[i])
-
-        const len_of_this_segment = distance(coordinates[i],coordinates[i + 1])
-        let len_remaining = len_of_this_segment
-        let accumulated_arrow_dist = 0.0
-        while (next_arrowhead_in < len_remaining && arrowheads_remaining > 0) {
-          const arrow_direction = normalized_direction(coordinates[i],coordinates[i + 1])
-
-          if (arrow_direction != undefined) { // otherwise, length of segment is zero -> no need to draw direction.
-            const arrow_head_root = sum_vec(coordinates[i],scale_vec(arrow_direction!, next_arrowhead_in + accumulated_arrow_dist) ) // TODO accumulated_arrow_dist
-            // ... draw arrow head ...
-            const arrow_direction_orth = orth_to_vec2d(arrow_direction)!
-            // orth cant be undefined, as len of dir is equal to 1.
-
-            const arrow_head_back = [
-              arrow_head_root[0] - arrow_direction[0] * HEAD_LENGTH,
-              arrow_head_root[1] - arrow_direction[1] * HEAD_LENGTH
-            ]
-
-            const arrow_point_1 =  sum_vec(arrow_head_back,scale_vec(arrow_direction_orth,HEAD_WIDTH))
-            const arrow_point_2 =  sum_vec(arrow_head_back,negative_vec(scale_vec(arrow_direction_orth,HEAD_WIDTH)))
-
-            coordinates_with_arrow.push(arrow_head_root)
-            coordinates_with_arrow.push(arrow_point_1)
-            coordinates_with_arrow.push(arrow_point_2)
-            coordinates_with_arrow.push(arrow_head_root)
-          }
-
-          len_remaining -= next_arrowhead_in
-          accumulated_arrow_dist += next_arrowhead_in
-          next_arrowhead_in = arrowhead_spacing
-          arrowheads_remaining -= 1
-        }
-
-        next_arrowhead_in -= len_remaining
-
-        coordinates_with_arrow.push(coordinates[i + 1])
-      // i ----|>---- i+1
-      }
+      coordinates_with_arrows = coordinates
     }
 
-    const feature = createFeature(FeatureType.Track, data, new LineString(coordinates_with_arrow), track.designations?.at(0)?.name)
+    const feature = createFeature(FeatureType.Track, data, new LineString(coordinates_with_arrows), track.designations?.at(0)?.name)
 
     if (trackSegment.type === undefined) {
       trackSegment.type = []
@@ -448,5 +382,83 @@ export default class TrackFeature extends LageplanFeature<Track> {
 
     const data = getFeatureData(feature) as TrackSectionFeatureData
     return data?.section?.guid
+  }
+
+  /**
+   * adds arrow-heads to track by making a detour on the track-line.
+   * on a long segment, multiple arrowheads are drawn. Their distance is at least min_dist, and they are somewhat evenly distributed.
+   * on a short segment (<2*min_dist), one arrowhead is drawn in the middle.
+   * TODO attention: the limit for the length of any segment is breached!
+*/
+  private add_arrowheads_to_track (coordinates: OlCoordinate[], min_dist:number = 40): OlCoordinate[] {
+    const HEAD_WIDTH = 0.4 // units in coordinate system
+    const HEAD_LENGTH = 1.0 // units in coordinate system
+    const MIN_EDGE_DIR_SPACING = min_dist
+    const coordinates_with_arrow = []
+
+    // find length and add
+    let sum_length = 0.0
+    for (let i = 0; i < coordinates.length - 1;i++) {
+      sum_length += distance(coordinates[i],coordinates[i + 1])
+    }
+
+    let arrowhead_spacing = 100
+    let next_arrowhead_in = 0.0
+    let arrowheads_remaining = 1
+
+    // if edge is short ,draw exactly one arrowhead in the middle of the segment
+    if (sum_length < 2 * MIN_EDGE_DIR_SPACING) {
+      next_arrowhead_in = sum_length / 2.0
+      arrowheads_remaining = 1
+      arrowhead_spacing = 0.0 // doesnt matter
+    } else {
+      // otherwise, evenly space them on edge.
+      arrowheads_remaining = Math.floor(sum_length / MIN_EDGE_DIR_SPACING)
+      arrowhead_spacing = MIN_EDGE_DIR_SPACING
+      next_arrowhead_in = (sum_length - arrowhead_spacing * (arrowheads_remaining - 1)) / 2.0
+    }
+
+    // zip coordinates and coordinates.skip(1) "by hand"
+    for (let i = 0; i < coordinates.length - 1;i++) {
+      coordinates_with_arrow.push(coordinates[i])
+
+      const len_of_this_segment = distance(coordinates[i],coordinates[i + 1])
+      let len_remaining = len_of_this_segment
+      let accumulated_arrow_dist = 0.0
+      while (next_arrowhead_in < len_remaining && arrowheads_remaining > 0) {
+        const arrow_direction = normalized_direction(coordinates[i],coordinates[i + 1])
+
+        if (arrow_direction != undefined) { // otherwise, length of segment is zero -> no need to draw direction.
+          const arrow_head_root = sum_vec(coordinates[i],scale_vec(arrow_direction!, next_arrowhead_in + accumulated_arrow_dist) ) // TODO accumulated_arrow_dist
+          // ... draw arrow head ...
+          const arrow_direction_orth = orth_to_vec2d(arrow_direction)!
+          // orth cant be undefined, as len of dir is equal to 1.
+
+          const arrow_head_back = [
+            arrow_head_root[0] - arrow_direction[0] * HEAD_LENGTH,
+            arrow_head_root[1] - arrow_direction[1] * HEAD_LENGTH
+          ]
+
+          const arrow_point_1 =  sum_vec(arrow_head_back,scale_vec(arrow_direction_orth,HEAD_WIDTH))
+          const arrow_point_2 =  sum_vec(arrow_head_back,negative_vec(scale_vec(arrow_direction_orth,HEAD_WIDTH)))
+
+          coordinates_with_arrow.push(arrow_head_root)
+          coordinates_with_arrow.push(arrow_point_1)
+          coordinates_with_arrow.push(arrow_point_2)
+          coordinates_with_arrow.push(arrow_head_root)
+        }
+
+        len_remaining -= next_arrowhead_in
+        accumulated_arrow_dist += next_arrowhead_in
+        next_arrowhead_in = arrowhead_spacing
+        arrowheads_remaining -= 1
+      }
+
+      next_arrowhead_in -= len_remaining
+
+      coordinates_with_arrow.push(coordinates[i + 1])
+    }
+
+    return coordinates_with_arrow
   }
 }
