@@ -391,8 +391,8 @@ export default class TrackFeature extends LageplanFeature<Track> {
    * TODO attention: the limit for the length of any segment is breached!
 */
   private add_arrowheads_to_track (coordinates: OlCoordinate[], min_dist:number = 40): OlCoordinate[] {
-    const HEAD_WIDTH = 0.4 // units in coordinate system
-    const HEAD_LENGTH = 1.0 // units in coordinate system
+    const HEAD_WIDTH = 0.6 // units in coordinate system
+    const HEAD_LENGTH = 1.4 // units in coordinate system
     const MIN_EDGE_DIR_SPACING = min_dist
     const coordinates_with_arrow = []
 
@@ -444,6 +444,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
 
           coordinates_with_arrow.push(arrow_head_root)
           coordinates_with_arrow.push(arrow_point_1)
+          coordinates_with_arrow.push(arrow_head_root)
           coordinates_with_arrow.push(arrow_point_2)
           coordinates_with_arrow.push(arrow_head_root)
         }
