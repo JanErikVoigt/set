@@ -63,6 +63,7 @@ export interface State {
   boundingBoxScaleFactor: number
   sessionState: TableType
   collisionEnabled: boolean
+  showTopologicalEdgeDirections: boolean
   planningObjectGuids: { [key: string]: true, }
   sheetCutCRS: DBRef
   isSheetCutAvaiable: boolean
@@ -114,6 +115,7 @@ export const store = createStore<State>({
     boundingBoxScaleFactor: 90,
     sessionState: TableType.DIFF,
     collisionEnabled: true,
+    showTopologicalEdgeDirections: true,
     planningObjectGuids: {},
     sheetCutCRS: DBRef.DR0,
     isSheetCutAvaiable: false,
@@ -126,6 +128,7 @@ export const store = createStore<State>({
     setpptConfiguration (state, payload: ToolboxConfiguration) {
       state.planproToolboxConfiguration = payload
       state.collisionEnabled = payload.defaultCollisionsEnabled
+      state.showTopologicalEdgeDirections = true
     },
     selectFeature (state, payload: string) {
       state.selectedFeatureGuid = payload
@@ -199,8 +202,14 @@ export const store = createStore<State>({
       store.commit('refreshMap')
     },
     setCollisionEnabled (state, payload: boolean) {
-      state.collisionEnabled = payload
+      state.collisionEnabled =  payload
     },
+
+    setShowTopologicalEdgeDirections (state, payload: boolean) {
+      state.showTopologicalEdgeDirections = payload
+      store.commit('refreshMap')
+    },
+
     defaultTrackWidth (state, payload: TrackWidth) {
       state.mainTrackWidth = payload.main
       state.otherTrackWidth = payload.other
