@@ -77,23 +77,25 @@ export default class SvgDrawBridge {
   }
 
   private static drawBridge (signalMountType: SignalMountType, width: number) {
+    const sw = SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH
+
     const kombination = document.createElement('g')
     const rect = document.createElement('rect')
     rect.setAttribute('width', width.toString())
     rect.setAttribute('height', '20')
-    rect.setAttribute('y', '10')
+    rect.setAttribute('y', '-10')
+    rect.setAttribute('x', `-${sw}`)
     rect.setAttribute('fill', 'white')
     kombination.appendChild(rect)
 
-    const sw = SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH
     const line1 = document.createElement('path')
     line1.setAttribute('stroke-width', '5')
-    line1.setAttribute('d', `M${sw},10 L${sw},0`)
+    line1.setAttribute('d', 'M 0,10 L 0,20')
     kombination.appendChild(line1)
 
     const line2 = document.createElement('path')
     line2.setAttribute('stroke-width', '5')
-    line2.setAttribute('d', `M${sw},30 L${sw},40`)
+    line2.setAttribute('d', 'M 0,-10 L 0,-20')
     kombination.appendChild(line2)
 
     if (signalMountType === SignalMountType.Signalbruecke) {
@@ -109,9 +111,10 @@ export default class SvgDrawBridge {
       kombination.appendChild(line4)
     }
 
-    const bbox = fromCenterPointAndMasure([width / 2, 20], width, 40)
+    const bbox = [-sw,-20,width + sw,20]
+    // fromCenterPointAndMasure([width / 2, 20], width, 40)
     kombination.appendChild(toHTMLElement(bbox))
-
+    // unsure, if that is needed. kombination.setAttribute('viewBox',`-${sw} -20 ${width + sw} 40`)
     return kombination
   }
 
