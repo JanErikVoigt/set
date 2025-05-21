@@ -46,7 +46,10 @@ export default class TrackSwitchFeature extends LageplanFeature<TrackSwitch> {
   }
 
   getFeatures (model: SiteplanState): Feature<Geometry>[] {
-    return model.trackSwitches.flatMap(tswitch => this.createTrackSwitchFeature(tswitch))
+    performance.mark('get trackSwitches-Features')
+    const result = model.trackSwitches.flatMap(tswitch => this.createTrackSwitchFeature(tswitch))
+    performance.measure('get trackSwitches-Features')
+    return result
   }
 
   private createTrackSwitchFeature (tswitch: TrackSwitch): Feature<Geometry>[] {

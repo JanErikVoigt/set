@@ -168,6 +168,7 @@ export default class FeatureService extends Vue {
       }
 
       // Load features
+      performance.mark('Start loading Features')
       this.listFeature
         .flatMap(feature => {
           if (feature instanceof LayoutInfoFeature) {
@@ -184,6 +185,7 @@ export default class FeatureService extends Vue {
           layer?.getSource()?.addFeatures(features)
         })
 
+      performance.mark('Load secondary Features')
       this.listFeature
         .sort((a, b) => a.getDelayedFeatureOrder() - b.getDelayedFeatureOrder())
         .flatMap(feature => this.loadDelayedFeatureType(newValue, feature))
@@ -194,6 +196,8 @@ export default class FeatureService extends Vue {
           )
           layer?.getSource()?.addFeatures(features)
         })
+
+      performance.measure('Load secondary Features')
 
       // Create bounding boxes
       // CollisionFeature.addCollisionFeatures(this.featureLayers)
@@ -333,6 +337,8 @@ export default class FeatureService extends Vue {
   }
 
   private modelLoaded (model: SiteplanModel) {
+    performance.mark('modelLoaded')
+
     this.model = model
     // console.log(JSON.stringify(model))
     store.commit('setModel', this.model)
@@ -394,6 +400,8 @@ export default class FeatureService extends Vue {
 
       this.map.addInteraction(new FeatureClickInteraction())
     }
+
+    performance.measure('modelLoaded')
   }
 }
 </script>
