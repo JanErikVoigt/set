@@ -115,9 +115,10 @@ export default class SvgDrawSignal extends AbstractDrawSVG {
           ) < MAX_BRIDGE_DIRECTION_OFFSET
             ? MountDirection.Up
             : MountDirection.Down
+
           bridgeParts.push({
             guid: signal.guid,
-            signal: SvgBridgeSignal.fromSvgElement(screen, offset, direction, signal.label ?? null)
+            signal: SvgBridgeSignal.fromSvgElement(screen, offset, direction, signal.lateralDistance[0], signal.label ?? null)
           })
         }
       }
@@ -128,7 +129,8 @@ export default class SvgDrawSignal extends AbstractDrawSVG {
   public isMultiSignal (signalMount: SignalMount): boolean {
     return signalMount.mountType === SignalMountType.SignalauslegerLinks ||
       signalMount.mountType === SignalMountType.SignalauslegerMitte ||
-      signalMount.mountType === SignalMountType.Signalbruecke
+      signalMount.mountType === SignalMountType.Signalbruecke ||
+      signalMount.mountType === SignalMountType.Signalausleger // TODO remove mitte and links
   }
 
   public getMountType (signalMount: SignalMount): SignalMountType {
