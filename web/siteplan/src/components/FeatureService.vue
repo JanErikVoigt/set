@@ -136,7 +136,7 @@ export default class FeatureService extends Vue {
     // Download the current model
     const modelType = store.state.planproModelType
     axios
-      .get<SiteplanModel>(`/siteplanKSTA_buehne_as_auslegerlinks.json`)
+      .get<SiteplanModel>('/siteplanKSTA_buehne_as_auslegerlinks.json')
       .then(response => {
         this.modelLoaded(response.data)
         store.commit('setLoading', false)
@@ -196,9 +196,9 @@ export default class FeatureService extends Vue {
         })
 
       // Create bounding boxes
-      CollisionFeature.addCollisionFeatures(this.featureLayers)
+      // CollisionFeature.addCollisionFeatures(this.featureLayers)
       // Start collision detection
-      this.collisionService.processCollisions(this.featureLayers)
+      // this.collisionService.processCollisions(this.featureLayers)
     } catch (exception) {
       console.error('Siteplan model update failed')
       console.error(exception)
