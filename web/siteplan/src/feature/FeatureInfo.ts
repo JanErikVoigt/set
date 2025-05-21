@@ -141,6 +141,8 @@ export function getFeatureName (type: FeatureType): string {
       return 'Fehler'
     case FeatureType.FMA:
       return 'Achszähler'
+    case FeatureType.Flash:
+      return 'WhatIsAFlash'
     case FeatureType.Platform:
     case FeatureType.Station:
       return 'Bahnsteig'
