@@ -198,9 +198,9 @@ class SignalTransformator extends BaseTransformator<Signal> {
 
 		if (mounts.length != 0) {
 			// Filter for a specific mounting type 
-			val specificMounts = mounts.map[mapToSiteplanMountType].filter [
-				it != SignalMountType.SONDERKONSTRUKTION
-			]
+			val specificMounts = mounts.map[mapToSiteplanMountType]
+			.filter [it != SignalMountType.SONDERKONSTRUKTION]
+			.filter [it != SignalMountType.ARBEITSBUEHNE]
 
 			if (specificMounts.length != 0) {
 				var mount = specificMounts.head
