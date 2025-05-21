@@ -256,7 +256,7 @@ class SignalTransformator extends BaseTransformator<Signal> {
 			case ENUM_BEFESTIGUNG_ART_ARBEITSBUEHNE:
 				return SignalMountType.ARBEITSBUEHNE
 			case ENUM_BEFESTIGUNG_ART_SIGNALAUSLEGER:
-				return SignalMountType.SIGNALAUSLEGER_LINKS
+				return SignalMountType.SIGNALAUSLEGER
 			case ENUM_BEFESTIGUNG_ART_SIGNALBRUECKE:
 				return SignalMountType.SIGNALBRUECKE
 		}

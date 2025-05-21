@@ -162,7 +162,18 @@ public enum SignalMountType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	ARBEITSBUEHNE(13, "Arbeitsbuehne", "Arbeitsbuehne");
+	ARBEITSBUEHNE(13, "Arbeitsbuehne", "Arbeitsbuehne"),
+	
+	/**
+	 * The '<em><b>Signalausleger</b></em>' literal object. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see #SIGNALAUSLEGER
+	 * @generated
+	 * @ordered
+	 */
+	SIGNALAUSLEGER(14, "Signalausleger", "Signalausleger");
+
 
 	/**
 	 * The '<em><b>Mast</b></em>' literal value. <!-- begin-user-doc --> <!--
@@ -317,6 +328,17 @@ public enum SignalMountType implements Enumerator {
 	 * @ordered
 	 */
 	public static final int ARBEITSBUEHNE_VALUE = 13;
+	
+	/**
+	 * The '<em><b>Signalausleger</b></em>' literal value. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see #SIGNALAUSLEGER
+	 * @model name="Signalausleger"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIGNALAUSLEGER_VALUE = 14;
 
 	/**
 	 * An array of all the '<em><b>Signal Mount Type</b></em>' enumerators. <!--
@@ -328,7 +350,7 @@ public enum SignalMountType implements Enumerator {
 			MAST, MEHRERE_MASTEN, PFOSTEN, SCHIENENFUSS, GLEISABSCHLUSS,
 			MAST_NIEDRIG, PFOSTEN_NIEDRIG, DECKENKONSTRUKTION, WANDKONSTRUKTION,
 			SIGNALAUSLEGER_LINKS, SIGNALAUSLEGER_MITTE, SIGNALBRUECKE,
-			SONDERKONSTRUKTION, ARBEITSBUEHNE };
+			SONDERKONSTRUKTION, ARBEITSBUEHNE,SIGNALAUSLEGER };
 
 	/**
 	 * A public read-only list of all the '<em><b>Signal Mount Type</b></em>'
@@ -410,6 +432,8 @@ public enum SignalMountType implements Enumerator {
 				return SIGNALAUSLEGER_LINKS;
 			case SIGNALAUSLEGER_MITTE_VALUE:
 				return SIGNALAUSLEGER_MITTE;
+			case SIGNALAUSLEGER_VALUE:
+				return SIGNALAUSLEGER;
 			case SIGNALBRUECKE_VALUE:
 				return SIGNALBRUECKE;
 			case SONDERKONSTRUKTION_VALUE:
