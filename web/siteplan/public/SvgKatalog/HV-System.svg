@@ -31,9 +31,11 @@
 
         <!-- Selbst gemessen -->
         <g class="HvSys" id="Vr1">
-            <circle r="10" cx="35" cy="20"/>
-            <circle r="10" cx="5" cy="40"/>
-            <toolbox:rectbound x="-5" y="-10" width="50" height="40" />
+            <circle r="10" cx="40" cy="10"/>
+            <circle r="10" cx="10" cy="30"/>
+            <toolbox:anchor id="mastAnkerTop" x="25" y="40" />
+            <toolbox:anchor id="mastAnkerBottom" x="25" y="0"/>
+            <toolbox:rectbound x="0" y="0" width="50" height="40"/>
         </g>
 
           <!-- Selbst gemessen -->
