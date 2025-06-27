@@ -53,8 +53,7 @@ export default class TrackDirectionFeature extends LageplanFeature<Track> {
         guid: 'TestGuid',
         data: track
       },
-      // new OlPoint([track.sections[0].segments[0].positions[0].x + 5, track.sections[0].segments[0].positions[0].y + 5]),
-      geometry,
+      new OlPoint([track.sections[0].segments[0].positions[0].x + 5, track.sections[0].segments[0].positions[0].y + 5]),
       undefined // no label
     )
 
@@ -64,15 +63,19 @@ export default class TrackDirectionFeature extends LageplanFeature<Track> {
     // const svg = this.drawFeatureSVG(drawData.data, .......
     // drawData.featureType, drawData.label)
     // const svg = this.getObjectSvg(track)
-    // "x" : 785329.388944429,
-    //       "y" : 6603565.665619974,
 
     this.createArrowBBox(feature, track, svg)
 
     feature.setStyle(_ => {
+      const icon2 = new OlIcon({
+        opacity: 1,
+        src: 'data:image/svg+xml;utf8,' + svg.content.outerHTML,
+        rotateWithView: true
+      })
+
       return new OlStyle({
-        image: icon,
-        geometry: geometry
+        image: icon2,
+        geometry
       })
     })
 
