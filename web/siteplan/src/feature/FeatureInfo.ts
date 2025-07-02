@@ -8,6 +8,7 @@
  */
 import { Rectangle } from '@/collision/CollisionExtension'
 import ModelError from '@/model/Error'
+import { DetailLevel } from '@/util/NamedFeatureLayer'
 import Feature from 'ol/Feature'
 import { Geometry, Polygon } from 'ol/geom'
 import FeatureMetadata, { ModelType } from './FeatureMetadata'
@@ -223,6 +224,38 @@ export function getFeatureMovePriority (feature: Feature<Geometry>) {
       return 0
     default:
       return -1
+  }
+}
+
+export function getFeatureDetailLevel (feature: Feature<Geometry>) {
+  const type = getFeatureType(feature)
+  switch (type) {
+    case FeatureType.TrackDirectionArrow:
+      return DetailLevel.Overview
+    case FeatureType.Signal:
+    case FeatureType.Error:
+    case FeatureType.FMA:
+    case FeatureType.Platform:
+    case FeatureType.Station:
+    case FeatureType.PZB:
+    case FeatureType.PZBGU:
+    case FeatureType.SignalRouteMarker:
+    case FeatureType.RouteMarker:
+    case FeatureType.Route:
+    case FeatureType.Track:
+    case FeatureType.TrackDesignationMarker:
+    case FeatureType.TrackSectionMarker:
+    case FeatureType.TrackLock:
+    case FeatureType.TrackSwitchEndMarker:
+    case FeatureType.TrackSwitch:
+    case FeatureType.Collision:
+    case FeatureType.TrackOutline:
+    case FeatureType.ExternalElementControl:
+    case FeatureType.LockKey:
+
+      return DetailLevel.ShowEverything
+    default:
+      return DetailLevel.ShowEverything
   }
 }
 

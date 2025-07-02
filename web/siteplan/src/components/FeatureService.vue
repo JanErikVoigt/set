@@ -301,7 +301,10 @@ export default class FeatureService extends Vue {
     const baseIndex = 2
     this.featureLayers = Object.values(FeatureLayerType)
       .filter(x => isNaN(Number(x)))
-      .map((key, index) => new NamedFeatureLayer(baseIndex + index, index))
+      .map((key, index) => {
+        console.log('key layer',key)
+        return new NamedFeatureLayer(baseIndex + index, index)
+      })
     this.featureLayers.forEach(layer => {
       this.map.addLayer(layer)
       if (layer.getLayerType() === FeatureLayerType.SheetCut && !Configuration.developmentMode()) {
@@ -369,6 +372,7 @@ export default class FeatureService extends Vue {
         )
         .forEach(c => {
           c.setMinZoom(lodZoom)
+          c.setMaxZoom(getFeatureDetailLevel(c))
         })
     })
 

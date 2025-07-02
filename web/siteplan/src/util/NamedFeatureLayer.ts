@@ -4,6 +4,23 @@ import Geometry from 'ol/geom/Geometry'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 
+// TODO move
+export enum DetailLevel {
+  ShowEverything,
+  Overview
+}
+
+function getMaxZoom (dl: DetailLevel) : number | undefined {
+  switch (dl) {
+    case DetailLevel.ShowEverything:
+      return undefined
+    case DetailLevel.Overview:
+      return 14
+    default:
+      return undefined
+  }
+}
+
 /**
  * Named layer that contains features
  *
@@ -13,14 +30,15 @@ export default class NamedFeatureLayer extends VectorLayer<VectorSource<Feature<
   private type: FeatureLayerType
   private displayName: string
 
-  constructor (zIndex: number, type: FeatureLayerType) {
+  constructor (zIndex: number, type: FeatureLayerType, minDetailLevel: DetailLevel) {
     super({
       updateWhileAnimating: true,
       updateWhileInteracting: true,
       source: new VectorSource(),
       renderBuffer: 1000,
       zIndex,
-      visible: getFeatureLayerDefaultVisibility(type)
+      visible: getFeatureLayerDefaultVisibility(type),
+      maxZoom: getMaxZoom(minDetailLevel)
     })
     this.type = type
     this.displayName = getFeatureLayerDisplayName(type)
@@ -43,3 +61,4 @@ export default class NamedFeatureLayer extends VectorLayer<VectorSource<Feature<
     super.getSource()?.clear()
   }
 }
+
