@@ -307,7 +307,7 @@ public enum SignalMountType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SONDERKONSTRUKTION_VALUE = 12,
+	public static final int SONDERKONSTRUKTION_VALUE = 12;
 
 	/**
 	 * The '<em><b>Arbeitsbuehne</b></em>' literal value. <!--
