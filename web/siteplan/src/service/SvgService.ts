@@ -77,7 +77,7 @@ export default class SvgService {
   }
 
   public getFeatureStyle<T extends object> (data: T, featureType: FeatureType, label?: Label) {
-    const drawData = {
+    const drawData : DrawSVGData<T> = {
       data,
       featureType,
       label
@@ -87,7 +87,10 @@ export default class SvgService {
     })
   }
 
-  private getSVGStyle<T extends object> (
+  // calculate a Style for the provided drawData. Style contains: image, scale, rotation.
+  // Basically: everything OpenLayers needs to draw an icon.
+  // The style is cached for each feature and called every "frame"
+  getSVGStyle<T extends object> (
     drawData: DrawSVGData<T>,
     svgFunction: ((object: DrawSVGData<T>) => ISvgElement)
   ): OlStyle {
@@ -131,6 +134,12 @@ export default class SvgService {
     element.appendChild(fontStyle)
   }
 
+  // this is only ever used in methods, where getFeatureStyle is also called.
+  // The feature style contains the feature svg...
+  // => this method is called twice.
+  //
+  // shouldn't all svgs be cached? why not?
+  // Or is this only relevant for loaded / not yet loaded - logic?
   public getFeatureSvg<T extends object> (data: T, featureType: FeatureType, label?: Label): ISvgElement {
     const drawData: DrawSVGData<T> = {
       data,
@@ -151,12 +160,17 @@ export default class SvgService {
     return this.catalog.get(groupName)
   }
 
+  /**
+   * call drawSVG for all drawClasses. If any produces a SVG != null, return that.
+   * If all null, return an error symbol.
+   */
   public drawFeatureSVG<T extends object> (data: T, featureType: FeatureType, label?: Label): ISvgElement {
     const svg = this.drawFeatureClass.map(drawClass => {
       if (drawClass.getFeatureType() === featureType) {
         return drawClass.drawSVG(data, label)
       }
 
+      // TODO what does this do?
       return drawClass.drawOtherSVG(data, featureType, label)
     }).find(ele => ele !== null)
 
