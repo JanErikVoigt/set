@@ -1,15 +1,3 @@
-
-global.ResizeObserver = class ResizeObserver {
-    observe() {
-      // do nothing
-    }
-    unobserve() {
-      // do nothing
-    }
-    disconnect() {
-      // do nothing
-    }
-  };
 import SvgService from '@/service/SvgService';
 import { axios } from 'axios';
 import { beforeAll, expect, test } from 'vitest';
