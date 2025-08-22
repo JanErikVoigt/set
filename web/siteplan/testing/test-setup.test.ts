@@ -14,5 +14,5 @@ describe.todo('unimplemented suite')
 
 test('Can create a SvgService', () => {
   const svgService = new SvgService(axios)
-  expect(1 + 2).toBe(3)
+  expect(svgService).toBeDefined()
 })
