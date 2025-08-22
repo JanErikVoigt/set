@@ -8,7 +8,7 @@ export default defineConfig({
       'rbush': __dirname + '/node_modules/rbush/rbush.js'
     },
     globals: true,
-    environment: 'happy-dom',
+    environment: 'edge-runtime',
     include: ['**/*.test.{js,ts}']
     // ...
   }

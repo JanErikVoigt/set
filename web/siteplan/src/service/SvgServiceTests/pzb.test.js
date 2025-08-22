@@ -1,26 +1,11 @@
 import SvgService from '@/service/SvgService';
 import { axios } from 'axios';
-import { beforeAll, expect, test } from 'vitest';
+import { expect, test } from 'vitest';
 
-beforeAll(() => {
-  global.ResizeObserver = class ResizeObserver {
-    observe() {
-      // do nothing
-    }
-    unobserve() {
-      // do nothing
-    }
-    disconnect() {
-      // do nothing
-    }
-  };
-});
+//vi.mock('axios')
 
 
-
-
-
-test('vitest is set up properly', () => {
+test('vitest browser environment is set up properly', () => {
   expect(typeof window).not.toBe('undefined')
 })
 
@@ -29,8 +14,6 @@ describe.todo('unimplemented suite')
 
 
 test('adds 1 + 2 to equal 3', () => {
-
-    
     const svgService = new SvgService(axios)
   expect(1+2).toBe(3)
 })
