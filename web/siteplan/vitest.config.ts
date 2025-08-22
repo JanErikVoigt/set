@@ -10,7 +10,7 @@ export default defineConfig({
       'rbush': __dirname + '/node_modules/rbush/rbush.js'
     },
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     include: ['**/*.test.{js,ts}']
     // ...
   }
