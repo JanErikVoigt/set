@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v20.html
  */
 
-import MapFeature from '@/feature/MapFeature'
 import booleanDisjoint from '@turf/boolean-disjoint'
 import booleanWithin from '@turf/boolean-within'
 import { lineString as turfLineString, polygon as turfPolygon } from '@turf/helpers'
@@ -136,13 +135,4 @@ export function isIntersectionLineString (a: Polygon, b: LineString): boolean {
   const turfA = transformPolygon(a)
   const turfB = turfLineString(b.getCoordinates())
   return booleanWithin(turfB, turfA) || !booleanDisjoint(turfB, turfA)
-}
-
-/**
- * Check if the feature is immovable
- * @param feature the feature
- * @returns true, if the feature is immovable
- */
-export function isImmovableFeature (feature: MapFeature): boolean {
-  return feature.isMovableInCollisionAvoidance()
 }

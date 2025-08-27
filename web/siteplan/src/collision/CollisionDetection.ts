@@ -9,6 +9,7 @@
 
 import { Collision } from '@/collision/CollisionService'
 import { getFeatureData, getFeatureGUID } from '@/feature/FeatureInfo'
+import MapFeature from '@/feature/MapFeature'
 import { isFeaturesIntersect } from '@/util/FeatureExtensions'
 import { distanceSq } from '@/util/Math'
 import { Feature } from 'ol'
@@ -17,7 +18,7 @@ import { Circle, LineString } from 'ol/geom'
 import Geometry from 'ol/geom/Geometry'
 import { fromCircle } from 'ol/geom/Polygon'
 import VectorSource from 'ol/source/Vector'
-import { isImmovableFeature, isIntersectionLineString, Line } from './CollisionExtension'
+import { isIntersectionLineString, Line } from './CollisionExtension'
 
 /**
  * Detection all Collision in Siteplan
@@ -65,7 +66,7 @@ export default class CollisionDetection {
       }
 
       // Make sure at least one feature is movable
-      const hasMovableFeatures = innerIntersect.some(c => !isImmovableFeature(c))
+      const hasMovableFeatures = innerIntersect.some(c => c.isMovableInCollisionAvoidance())
       if (!hasMovableFeatures) {
         return
       }

@@ -9,11 +9,12 @@
 
 import BoundingBoxesHandler from '@/collision/BoundingBoxesHandler'
 import CollisionDetection from '@/collision/CollisionDetection'
-import { isImmovableFeature, Line } from '@/collision/CollisionExtension'
+import { Line } from '@/collision/CollisionExtension'
 import { CollisionFeatureData } from '@/collision/CollisionFeature'
 import CollisionHandler from '@/collision/CollisionHandler'
 import CollisionMoveIndicators from '@/collision/CollisionMoveIndicators'
 import TrackOutlineHandler from '@/collision/TrackOutlineHandler'
+import MapFeature from '@/feature/MapFeature'
 import { store } from '@/store'
 import Configuration from '@/util/Configuration'
 import { getExtent } from '@/util/ExtentExtension'
@@ -111,7 +112,7 @@ export default class CollisionService {
 
     // Remove immovable features
     collisionFeatures = collisionFeatures
-      .filter(feature => !isImmovableFeature(feature))
+      .filter(feature => feature.isMovableInCollisionAvoidance())
 
     // Find relevant features near center of collision group
     const midPointOfCollision = getCenter(getExtent(collisionFeatures))
