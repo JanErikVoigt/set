@@ -221,10 +221,9 @@ public final class ToolboxTableView extends BasePart {
 	}
 
 	private Titlebox getTitlebox(final String shortcut) {
-		final PlanProToTitleboxTransformation planProToTitlebox = PlanProToTitleboxTransformation
-				.create();
+		final PlanProToTitleboxTransformation planProToTitlebox = new PlanProToTitleboxTransformation(
+				getSessionService());
 		return planProToTitlebox.transform(
-				getModelSession().getPlanProSchnittstelle(),
 				tableService.getTableNameInfo(shortcut),
 				this::getAttachmentPath);
 	}
@@ -516,7 +515,8 @@ public final class ToolboxTableView extends BasePart {
 		bodyLayerStack.setConfigLabelAccumulator(compareTableCellLabelConfig());
 		selectionLayer.setConfigLabelAccumulator((final LabelStack configLabels,
 				final int columnPosition, final int rowPosition) -> {
-			configLabels.addLabel(ToolboxConstants.RICHTEXT_CELL_LABEL);
+			configLabels
+					.addLabel(ToolboxConstants.SEARCH_CELL_DISPLAY_CONVERTER);
 		});
 
 		bodyLayerStack.getSelectionLayer().clear();
