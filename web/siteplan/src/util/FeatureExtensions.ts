@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v20.html
  */
 import { isGeometryIntersection, Line } from '@/collision/CollisionExtension'
-import { FeatureLayerType, FeatureType, getFeatureData, getFeatureLayer, getFeatureMovePriority, getFeatureType } from '@/feature/FeatureInfo'
+import { FeatureLayerType, FeatureType, getFeatureData, getFeatureLayer, getFeatureType } from '@/feature/FeatureInfo'
 import { SheetCutFeatureData } from '@/feature/LayoutInfoFeature'
+import MapFeature from '@/feature/MapFeature'
 import { TrackSwitchFeatureData } from '@/feature/TrackSwitchFeature'
 import { CantPoint } from '@/model/Cant'
 import { Coordinate, Position } from '@/model/Position'
@@ -176,8 +177,8 @@ export function sortFeaturesByPrio (features: MapFeature[]): MapFeature[] {
     }
 
     // Sort by feature type priority
-    const aPriority = getFeatureMovePriority(aFeature)
-    const bPriority = getFeatureMovePriority(bFeature)
+    const aPriority = aFeature instanceof MapFeature ? aFeature.movePriority() : -1
+    const bPriority = bFeature instanceof MapFeature ? bFeature.movePriority() : -1
     if (aPriority !== bPriority) {
       return aPriority > bPriority ? -1 : 1
     }

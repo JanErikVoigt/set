@@ -188,36 +188,6 @@ export function getFeatureName (type: FeatureType): string {
   }
 }
 
-export function getFeatureMovePriority (feature: MapFeature) {
-  const type = getFeatureType(feature)
-  switch (type) {
-    case FeatureType.Signal:
-      return 1
-    case FeatureType.Error:
-    case FeatureType.FMA:
-    case FeatureType.Platform:
-    case FeatureType.Station:
-    case FeatureType.PZB:
-    case FeatureType.PZBGU:
-    case FeatureType.SignalRouteMarker:
-    case FeatureType.RouteMarker:
-    case FeatureType.Route:
-    case FeatureType.Track:
-    case FeatureType.TrackDesignationMarker:
-    case FeatureType.TrackSectionMarker:
-    case FeatureType.TrackLock:
-    case FeatureType.TrackSwitchEndMarker:
-    case FeatureType.TrackSwitch:
-    case FeatureType.Collision:
-    case FeatureType.TrackOutline:
-    case FeatureType.ExternalElementControl:
-    case FeatureType.LockKey:
-      return 0
-    default:
-      return -1
-  }
-}
-
 export function getFeatureType (feature: MapFeature): FeatureType {
   return (feature.get('data') as FeatureMetadata).type
 }
