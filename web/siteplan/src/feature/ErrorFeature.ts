@@ -10,8 +10,6 @@
 import LageplanFeature from '@/feature/LageplanFeature'
 import ModelError from '@/model/Error'
 import { SiteplanState } from '@/model/SiteplanModel'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import OlPoint from 'ol/geom/Point'
 import { Style, Text } from 'ol/style'
 import { createFeature, FeatureType } from './FeatureInfo'
@@ -26,13 +24,13 @@ export default class ErrorFeature extends LageplanFeature<ModelError> {
     return model.errors
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model)
       .filter(x => x.position)
       .map(element => this.createError(element))
   }
 
-  private createError (error: ModelError): Feature<Geometry> {
+  private createError (error: ModelError): MapFeature {
     if (!error.position) {
       throw new Error('Can only create errors with a position')
     }

@@ -9,11 +9,10 @@
 
 import { createFeature, FeatureLayerType, FeatureType, getFeatureData } from '@/feature/FeatureInfo'
 import NamedFeatureLayer from '@/util/NamedFeatureLayer'
-import { Feature } from 'ol'
 import Geometry from 'ol/geom/Geometry'
 
 export default class TrackOutlineHandler{
-  public getTrackOutlineLookUp (layer: NamedFeatureLayer[]): Feature<Geometry>[] | undefined {
+  public getTrackOutlineLookUp (layer: NamedFeatureLayer[]): MapFeature[] | undefined {
     if (Array.isArray(layer)) {
       const collisionLayer = (layer as NamedFeatureLayer[]).find(c => c.getLayerType() === FeatureLayerType.Collision)
       if (!collisionLayer) {

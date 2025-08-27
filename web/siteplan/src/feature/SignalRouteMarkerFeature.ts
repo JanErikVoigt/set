@@ -17,9 +17,7 @@ import { getColor } from '@/model/SiteplanObject'
 import { pointInDistance } from '@/util/Math'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
 import NamedFeatureLayer from '@/util/NamedFeatureLayer'
-import { Feature } from 'ol'
 import { LineString, Point } from 'ol/geom'
-import Geometry from 'ol/geom/Geometry'
 import { Stroke, Style } from 'ol/style'
 import { createFeature, FeatureLayerType, FeatureType, getFeatureData, getFeatureType } from './FeatureInfo'
 
@@ -35,7 +33,7 @@ export default class SignalRouteMarkerFeature extends LageplanFeature<SignalMoun
     return []
   }
 
-  getDelayedFeatures (model: SiteplanState, layers: NamedFeatureLayer[]): Feature<Geometry>[] {
+  getDelayedFeatures (model: SiteplanState, layers: NamedFeatureLayer[]): MapFeature[] {
     const signalLayer = layers.find(layer => layer.getLayerType() === FeatureLayerType.Signal)
     const source = signalLayer?.getSource()
     if (!source) {
@@ -46,7 +44,7 @@ export default class SignalRouteMarkerFeature extends LageplanFeature<SignalMoun
     return signalFeatures.flatMap(feature => this.createSignalLocationLine(feature))
   }
 
-  private createSignalLocationLine (signalFeature: Feature<Geometry>): Feature<Geometry>[] {
+  private createSignalLocationLine (signalFeature: MapFeature): MapFeature[] {
     const signalMount = getFeatureData(signalFeature) as SignalMount
     const signalPos = signalMount.position
     // Find direction of the signal
@@ -112,7 +110,7 @@ export default class SignalRouteMarkerFeature extends LageplanFeature<SignalMoun
     return [startPoint, endPoint]
   }
 
-  private followFeatureMovement (feature: Feature<Geometry>, featureToFollow: Feature<Geometry>) {
+  private followFeatureMovement (feature: MapFeature, featureToFollow: MapFeature) {
     const originalPoint = (featureToFollow.getGeometry() as Point).clone()
     const originalGeometry = feature.getGeometry()
     featureToFollow.getGeometry()?.on('change', () => {
@@ -127,7 +125,7 @@ export default class SignalRouteMarkerFeature extends LageplanFeature<SignalMoun
     })
   }
 
-  setFeatureColor (feature: Feature<Geometry>): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature): MapFeature {
     return feature
   }
 }

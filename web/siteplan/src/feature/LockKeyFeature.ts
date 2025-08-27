@@ -14,8 +14,6 @@ import { SiteplanState } from '@/model/SiteplanModel'
 import { getLabelColor } from '@/model/SiteplanObject'
 import { ISvgElement } from '@/model/SvgElement'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
 import LageplanFeature from './LageplanFeature'
@@ -36,11 +34,11 @@ export default class LockKeyFeature extends LageplanFeature<LockKey> {
     )
   }
 
-  public getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  public getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).map(lockkey => this.createLockKeyFeature(lockkey))
   }
 
-  private createLockKeyFeature (lockKey: LockKey) : Feature<Geometry> {
+  private createLockKeyFeature (lockKey: LockKey) : MapFeature {
     const feature = createFeature(
       FeatureType.LockKey,
       lockKey,
@@ -71,7 +69,7 @@ export default class LockKeyFeature extends LageplanFeature<LockKey> {
     return feature
   }
 
-  private createLockKeyBBox (feature: Feature<Geometry>, lockKey: LockKey, svg: ISvgElement, rotation: number) {
+  private createLockKeyBBox (feature: MapFeature, lockKey: LockKey, svg: ISvgElement, rotation: number) {
     const position: Position = {
       rotation,
       x: lockKey.position.x,
@@ -82,7 +80,7 @@ export default class LockKeyFeature extends LageplanFeature<LockKey> {
     })
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], lockkey => this.getObjectSvg(lockkey))
   }
 }

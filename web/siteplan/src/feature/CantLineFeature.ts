@@ -9,15 +9,13 @@
 
 import LageplanFeature from '@/feature/LageplanFeature'
 
+import { Cant } from '@/model/Cant'
 import { SiteplanState } from '@/model/SiteplanModel'
 import { ISvgElement } from '@/model/SvgElement'
-import Geometry from 'ol/geom/Geometry'
-import { createFeature, FeatureType } from './FeatureInfo'
-import { Cant } from '@/model/Cant'
-import { LineString } from 'ol/geom'
-import { Style, Stroke } from 'ol/style'
 import { store } from '@/store'
-import { Feature } from 'ol'
+import { LineString } from 'ol/geom'
+import { Stroke, Style } from 'ol/style'
+import { createFeature, FeatureType } from './FeatureInfo'
 
 /**
  * Container for all Cant features
@@ -34,11 +32,11 @@ export default class CantFeature extends LageplanFeature<Cant> {
     )
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).map((element, index) => this.createCantLineFeature(element, index))
   }
 
-  private createCantLineFeature (cant: Cant, index: number): Feature<Geometry> {
+  private createCantLineFeature (cant: Cant, index: number): MapFeature {
     const coords = [
       [
         cant.pointA.position.x,
@@ -77,7 +75,7 @@ export default class CantFeature extends LageplanFeature<Cant> {
     return feature
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], cant => this.getObjectSvg(cant))
   }
 }

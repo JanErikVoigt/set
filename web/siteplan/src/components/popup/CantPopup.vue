@@ -38,7 +38,7 @@ import { store } from '@/store'
 import { Cant, CantPoint } from '@/model/Cant'
 
 const props = defineProps<{
-  feature: Feature<Geometry>
+  feature: MapFeature
 }>()
 
 const cant = computed<CantPoint>(() => {

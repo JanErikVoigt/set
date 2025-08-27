@@ -9,10 +9,8 @@
 import { FeatureLayerType } from '@/feature/FeatureInfo'
 import { store } from '@/store'
 import { getExtent } from '@/util/ExtentExtension'
-import { Feature } from 'ol'
 import { Control } from 'ol/control'
 import { isEmpty } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
 import View from 'ol/View'
 import NamedFeatureLayer from '../NamedFeatureLayer'
 
@@ -61,7 +59,7 @@ export default class ExtentControl extends Control {
   public fit (): void {
     let extent = store.state.allFeaturesExtent
     if (isEmpty(extent)) {
-      const features : Feature<Geometry>[] = []
+      const features : MapFeature[] = []
       this.layers.filter(layer =>
         layer.getLayerType() !== FeatureLayerType.Collision
           && layer.getLayerType() !== FeatureLayerType.SheetCut)

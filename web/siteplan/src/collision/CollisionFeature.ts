@@ -9,7 +9,6 @@
 
 import { Rectangle } from '@/collision/CollisionExtension'
 import NamedFeatureLayer from '@/util/NamedFeatureLayer'
-import { Feature } from 'ol'
 import { Coordinate } from 'ol/coordinate'
 import Geometry from 'ol/geom/Geometry'
 import GeometryCollection from 'ol/geom/GeometryCollection'
@@ -27,7 +26,7 @@ import { createFeature, FeatureLayerType, FeatureType, getFeatureBoundArea, getF
  */
 export interface CollisionFeatureData {
   guid: string
-  refFeature: Feature<Geometry>
+  refFeature: MapFeature
   originalPos: Coordinate
   originalStyleFunction: StyleFunction | undefined
 }
@@ -52,7 +51,7 @@ export default class CollisionFeature {
     })
   }
 
-  private static createBBoxFeature (refFeature: Feature<Geometry>, polygon: Polygon[]): Feature<Geometry> {
+  private static createBBoxFeature (refFeature: MapFeature, polygon: Polygon[]): MapFeature {
     const refGeo = refFeature.getGeometry()
     if (!refGeo) {
       throw new Error('Missing geometry')

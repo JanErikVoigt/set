@@ -1,6 +1,4 @@
 import { FeatureLayerType, FeatureType, getFeatureLayerDefaultVisibility, getFeatureLayerDisplayName, getFeatureType } from '@/feature/FeatureInfo'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 
@@ -9,7 +7,7 @@ import VectorSource from 'ol/source/Vector'
  *
  * @author Peters
  */
-export default class NamedFeatureLayer extends VectorLayer<VectorSource<Feature<Geometry>>> {
+export default class NamedFeatureLayer extends VectorLayer<VectorSource<MapFeature>> {
   private type: FeatureLayerType
   private displayName: string
 

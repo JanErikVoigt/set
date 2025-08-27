@@ -13,14 +13,12 @@ import { Route, RouteSection } from '@/model/Route'
 import { SiteplanState } from '@/model/SiteplanModel'
 import { store } from '@/store'
 import { Coordinate } from 'ol/coordinate'
-import Feature from 'ol/Feature'
-import Geometry from 'ol/geom/Geometry'
 import OlLineString from 'ol/geom/LineString'
 import { Stroke, Style } from 'ol/style'
 import { createFeature, FeatureType } from './FeatureInfo'
 
 export default class RouteFeature extends LageplanFeature<Route> {
-  getFeatures (model: SiteplanState): Feature<Geometry> [] {
+  getFeatures (model: SiteplanState): MapFeature [] {
     return this.getObjectsModel(model).flatMap(route =>
       route?.sections?.flatMap(section =>
         this.createRouteSectionFeature(section)))
@@ -30,7 +28,7 @@ export default class RouteFeature extends LageplanFeature<Route> {
     return model.routes
   }
 
-  private createRouteSectionFeature (routeSection: RouteSection): Feature<Geometry> {
+  private createRouteSectionFeature (routeSection: RouteSection): MapFeature {
     const coordinates: Coordinate[] = []
     routeSection.positions.forEach((position: Position) => coordinates.push([position.x, position.y]))
     if (coordinates.length < 1) {
@@ -62,7 +60,7 @@ export default class RouteFeature extends LageplanFeature<Route> {
     return feature
   }
 
-  setFeatureColor (feature: Feature<Geometry>): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature): MapFeature {
     return feature
   }
 }

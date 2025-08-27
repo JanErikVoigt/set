@@ -13,9 +13,7 @@ import { SiteplanState } from '@/model/SiteplanModel'
 import { getColor } from '@/model/SiteplanObject'
 import { ISvgElement } from '@/model/SvgElement'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
 import { getWidth } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
 import Point from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
 
@@ -25,7 +23,7 @@ import { createFeature, FeatureType } from './FeatureInfo'
  * @author Stuecker
  */
 export default class PZBFeature extends LageplanFeature<PZB> {
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return model.pzb.map(element => this.createPZBComponentFeature(element))
   }
 
@@ -37,7 +35,7 @@ export default class PZBFeature extends LageplanFeature<PZB> {
     return model.pzb
   }
 
-  createPZBComponentFeature (pzb: PZB): Feature<Geometry> {
+  createPZBComponentFeature (pzb: PZB): MapFeature {
     const feature = createFeature(
       FeatureType.PZB,
       pzb,
@@ -75,7 +73,7 @@ export default class PZBFeature extends LageplanFeature<PZB> {
     return feature
   }
 
-  private createPZBBBox (feature: Feature<Geometry>, pzb: PZB, pzbSVG: ISvgElement): void {
+  private createPZBBBox (feature: MapFeature, pzb: PZB, pzbSVG: ISvgElement): void {
     const offset = 1.25
     for (const bbox of pzbSVG.boundingBox) {
       const translate = [getWidth(bbox) / 2 - offset, 0]
@@ -93,7 +91,7 @@ export default class PZBFeature extends LageplanFeature<PZB> {
     }
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], pzb => this.getObjectSvg(pzb))
   }
 }

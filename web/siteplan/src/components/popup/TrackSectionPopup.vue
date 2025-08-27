@@ -58,7 +58,7 @@ import { Options, Vue } from 'vue-class-component'
 export default class TrackSectionPopup extends Vue {
   trackSection!: TrackSection
   trackSegment!: TrackSegment
-  feature!: Feature<Geometry>
+  feature!: MapFeature
   trackLabel!: string
   trackGuid!: string
   isDevelopmentMode: boolean = Configuration.developmentMode()

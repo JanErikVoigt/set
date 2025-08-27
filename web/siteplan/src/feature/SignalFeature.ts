@@ -13,9 +13,7 @@ import { SignalMount } from '@/model/SignalMount'
 import { SiteplanState } from '@/model/SiteplanModel'
 import { ISvgElement } from '@/model/SvgElement'
 import { updateLabelOrientation } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
 import { getCenter } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType, getFeatureData } from './FeatureInfo'
 
@@ -25,7 +23,7 @@ import { createFeature, FeatureType, getFeatureData } from './FeatureInfo'
  * @author Stuecker
  */
 export default class SignalFeature extends LageplanFeature<SignalMount> {
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).map(element => this.createSignalFeature(element))
   }
 
@@ -37,7 +35,7 @@ export default class SignalFeature extends LageplanFeature<SignalMount> {
     return this.svgService.getFeatureSvg(signalMount, FeatureType.Signal)
   }
 
-  private createSignalFeature (signalMount: SignalMount): Feature<Geometry> {
+  private createSignalFeature (signalMount: SignalMount): MapFeature {
     const feature = createFeature(
       FeatureType.Signal,
       signalMount,
@@ -67,7 +65,7 @@ export default class SignalFeature extends LageplanFeature<SignalMount> {
     return feature
   }
 
-  private createSignalBBox (feature: Feature<Geometry>, signalMount: SignalMount, signalSvg: ISvgElement) {
+  private createSignalBBox (feature: MapFeature, signalMount: SignalMount, signalSvg: ISvgElement) {
     if (!signalSvg.nullpunkt) {
       signalSvg.boundingBox.forEach(bbox => (
         LageplanFeature.createBBox(
@@ -89,7 +87,7 @@ export default class SignalFeature extends LageplanFeature<SignalMount> {
     }
   }
 
-  setFeatureColor (feature: Feature<Geometry>, color?: number[], partID?: string): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature, color?: number[], partID?: string): MapFeature {
     if (!color && !partID) {
       this.resetFeatureColor(feature)
     } else if (partID) {
@@ -104,10 +102,10 @@ export default class SignalFeature extends LageplanFeature<SignalMount> {
   }
 
   protected setFeatureRegionColor (
-    feature: Feature<Geometry>,
+    feature: MapFeature,
     objectPart?: string | undefined,
     color?: number[]
-  ): Feature<Geometry> {
+  ): MapFeature {
     const signalModel = getFeatureData(feature) as SignalMount
     // IMPROVE: Because at the moment Signal Additive doesn't have GUID,
     // you can't set region color for this.
@@ -141,7 +139,7 @@ export default class SignalFeature extends LageplanFeature<SignalMount> {
     return feature
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], mount => this.getObjectSvg(mount), Object.values(SignalPart))
   }
 }

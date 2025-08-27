@@ -14,11 +14,11 @@ import turfDifference from '@turf/difference'
 import * as turf from '@turf/helpers'
 import turfIntersect from '@turf/intersect'
 import { MultiPolygon as GeoJSONMultiPolygon, Position as GeoJSONPosition } from 'geojson'
-import { Feature, Map } from 'ol'
+import { Map } from 'ol'
 import { Control } from 'ol/control'
 import { getBottomLeft, getBottomRight, getCenter, getHeight, getTopLeft, getTopRight, getWidth } from 'ol/extent'
 import { GeoJSONPolygon } from 'ol/format/GeoJSON'
-import { Geometry, MultiPolygon, Polygon } from 'ol/geom'
+import { MultiPolygon, Polygon } from 'ol/geom'
 import { Style } from 'ol/style'
 import Configuration from '../Configuration'
 import { getScaleForPpm, setMapScale } from '../MapScale'
@@ -30,9 +30,9 @@ import PlanProToolbox from '../PlanProToolbox'
 interface ExportTileData {
   center: number[]
   tileExtent: number[]
-  sheetCutFeature: Feature<Geometry>
+  sheetCutFeature: MapFeature
   // The part of tile polygon, which not overlapp sheetcut polygon
-  outsidePolygonFeature: Feature<Geometry>[]
+  outsidePolygonFeature: MapFeature[]
 }
 
 interface ExportCanvasData {
@@ -131,12 +131,12 @@ export default class ExportControl extends Control {
     return scaleValue
   }
 
-  private getSheetcutFeatures (): Feature<Geometry>[] | undefined {
+  private getSheetcutFeatures (): MapFeature[] | undefined {
     const layoutInfoLayer = store.state.featureLayers.find(layer => layer.getLayerType() === FeatureLayerType.SheetCut)
     return layoutInfoLayer?.getFeaturesByType(FeatureType.SheetCut)
   }
 
-  private async exportSiteplan (sheetCutFeatures: Feature<Geometry>[], scale: number) {
+  private async exportSiteplan (sheetCutFeatures: MapFeature[], scale: number) {
     this.lockMapDuringExport(true)
     const result: ExportCanvasData[] = []
     const originalRotation = this.map.getView().getRotation()
@@ -181,7 +181,7 @@ export default class ExportControl extends Control {
   }
 
   private async getSiteplanSheetcutExportCanvas (
-    sheetCutFeatures: Feature<Geometry>[],
+    sheetCutFeatures: MapFeature[],
     visibleLayers: NamedFeatureLayer[],
     resolution: number
   ) : Promise<ExportCanvasData[]> {
@@ -241,7 +241,7 @@ export default class ExportControl extends Control {
    * @returns {@type ExportTileData}
    */
   private getExportTilesData (
-    sheetCutFeature: Feature<Geometry>,
+    sheetCutFeature: MapFeature,
     exportPolygon: Polygon
   ) : ExportTileData[] {
     const viewPortSize = this.getViewportSizePx()
@@ -314,7 +314,7 @@ export default class ExportControl extends Control {
       geometry = new Polygon(polygon.coordinates as GeoJSONPosition[][])
     }
 
-    const outsidePolygonFeature = new Feature<Geometry>({
+    const outsidePolygonFeature = new MapFeature({
       name: ExportControl.OUTSIDE_POLYGON_FEATURE,
       geometry
     })

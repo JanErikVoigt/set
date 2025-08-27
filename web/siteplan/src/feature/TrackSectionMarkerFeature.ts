@@ -12,9 +12,7 @@ import { SiteplanState } from '@/model/SiteplanModel'
 import Track from '@/model/Track'
 import TrackSection from '@/model/TrackSection'
 import { store } from '@/store'
-import { Feature } from 'ol'
 import { Coordinate as OlCoordinate } from 'ol/coordinate'
-import Geometry from 'ol/geom/Geometry'
 import OlPoint from 'ol/geom/Point'
 import { Style } from 'ol/style'
 import { createFeature, FeatureType } from './FeatureInfo'
@@ -33,13 +31,13 @@ export default class TrackSectionMarkerFeature extends LageplanFeature<Track> {
     return model.tracks
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).flatMap(track =>
       track?.sections.flatMap(section =>
         this.createTrackSectionMarkerFeatures(section)))
   }
 
-  private createTrackSectionMarkerFeatures (trackSection: TrackSection): Feature<Geometry>[] {
+  private createTrackSectionMarkerFeatures (trackSection: TrackSection): MapFeature[] {
     const coordinates: OlCoordinate[] = []
     trackSection.segments.forEach(segment =>
       coordinates.push([segment.positions[0].x, segment.positions[0].y]))
@@ -47,12 +45,12 @@ export default class TrackSectionMarkerFeature extends LageplanFeature<Track> {
     const lastPosition = lastSegment.positions[lastSegment.positions.length - 1]
     coordinates.push([lastPosition.x, lastPosition.y])
 
-    const features: Feature<Geometry>[] = []
+    const features: MapFeature[] = []
     coordinates.forEach(coordinate => features.push(this.createTrackSectionMarkerFeature(coordinate, trackSection)))
     return features
   }
 
-  private createTrackSectionMarkerFeature (position: OlCoordinate, trackSection: TrackSection): Feature<Geometry> {
+  private createTrackSectionMarkerFeature (position: OlCoordinate, trackSection: TrackSection): MapFeature {
     const feature = createFeature(
       FeatureType.TrackSectionMarker,
       trackSection,
@@ -83,7 +81,7 @@ export default class TrackSectionMarkerFeature extends LageplanFeature<Track> {
     return feature
   }
 
-  setFeatureColor (feature: Feature<Geometry>): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature): MapFeature {
     return feature
   }
 }

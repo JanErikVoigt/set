@@ -19,17 +19,16 @@ import Configuration from '@/util/Configuration'
 import { getExtent } from '@/util/ExtentExtension'
 import { sortFeaturesByPrio, toLines } from '@/util/FeatureExtensions'
 import NamedFeatureLayer from '@/util/NamedFeatureLayer'
-import { Feature, Map as OlMap } from 'ol'
+import { Map as OlMap } from 'ol'
 import BaseEvent from 'ol/events/Event'
 import { getCenter } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
 import LineString from 'ol/geom/LineString'
 import { FeatureLayerType, FeatureType, getFeatureBoundArea, getFeatureData, getFeatureGUID } from '../feature/FeatureInfo'
 
 /**
  * A collision is a group of features which collide
  */
-export type Collision = Feature<Geometry>[]
+export type Collision = MapFeature[]
 
 /**
  * Container for all collision features
@@ -40,12 +39,12 @@ export default class CollisionService {
   // Distance for find relevant features
   private readonly RELEVANT_DISTANCE = CollisionHandler.MAX_VALUE + 10
 
-  private featuresTranslated = new Map<Feature<Geometry>, number[]>()
-  private featuresIntersectInArea: Feature<Geometry>[][] = []
-  protected bboxFeatures = new Array<Feature<Geometry>>()
+  private featuresTranslated = new Map<MapFeature, number[]>()
+  private featuresIntersectInArea: MapFeature[][] = []
+  protected bboxFeatures = new Array<MapFeature>()
   protected scale = store.state.boundingBoxScaleFactor
   private eventListenerAdded = false
-  protected trackOutlineFeatures: Feature<Geometry>[] = []
+  protected trackOutlineFeatures: MapFeature[] = []
   private trackFeatures: Line[][] = []
   private map: OlMap
   private collisionDetection = new CollisionDetection()
@@ -96,7 +95,7 @@ export default class CollisionService {
   public reset () {
     this.featuresTranslated.clear()
     this.featuresIntersectInArea = []
-    this.bboxFeatures = new Array<Feature<Geometry>>()
+    this.bboxFeatures = new Array<MapFeature>()
     this.scale = store.state.boundingBoxScaleFactor
   }
 
@@ -106,7 +105,7 @@ export default class CollisionService {
    */
   private collisionDisplacement (collision: Collision): void {
     // Order features by priority
-    let collisionFeatures = Array<Feature<Geometry>>().concat(sortFeaturesByPrio(collision))
+    let collisionFeatures = Array<MapFeature>().concat(sortFeaturesByPrio(collision))
     // The feature with the highest priority won't move
     collisionFeatures.pop()
 
@@ -182,7 +181,7 @@ export default class CollisionService {
         const scale: number = baseResolution / resolution
 
         return this.moveIndicator.createStyle(
-          feature as Feature<Geometry>,
+          feature as MapFeature,
           [oldCenter, newCenter],
           originalStyle,
           scale

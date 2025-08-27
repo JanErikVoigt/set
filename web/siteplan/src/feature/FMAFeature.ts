@@ -15,8 +15,6 @@ import { getColor } from '@/model/SiteplanObject'
 import { ISvgElement } from '@/model/SvgElement'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
 import SvgDrawFMAComponent from '@/util/SVG/Draw/SvgDrawFMAComponent'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
 
@@ -34,11 +32,11 @@ export default class FMAFeature extends LageplanFeature<FMAComponent> {
     return this.svgService.getFeatureSvg(model, FeatureType.FMA, model.label)
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).map(element => this.createFMAComponentFeature(element))
   }
 
-  private createFMAComponentFeature (fma: FMAComponent): Feature<Geometry> {
+  private createFMAComponentFeature (fma: FMAComponent): MapFeature {
     const feature = createFeature(
       FeatureType.FMA,
       fma,
@@ -71,7 +69,7 @@ export default class FMAFeature extends LageplanFeature<FMAComponent> {
     return feature
   }
 
-  private createFMABBox (feature: Feature<Geometry>, fma: FMAComponent, fmaSVG: ISvgElement) {
+  private createFMABBox (feature: MapFeature, fma: FMAComponent, fmaSVG: ISvgElement) {
     const translate = fma.rightSide
       ? [SvgDrawFMAComponent.SVG_FMA_X_OFFSET, 0]
       : [-SvgDrawFMAComponent.SVG_FMA_X_OFFSET, 0]
@@ -80,7 +78,7 @@ export default class FMAFeature extends LageplanFeature<FMAComponent> {
     })
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], fma => this.getObjectSvg(fma))
   }
 }

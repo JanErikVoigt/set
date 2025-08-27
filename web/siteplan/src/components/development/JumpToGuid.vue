@@ -58,7 +58,7 @@ export default class JumpToGuid extends Vue {
   map!: Map
   unsubscribe: SubscribeOptions | undefined
   selectFeatureOffset = 0
-  feature!: Feature<Geometry>
+  feature!: MapFeature
   listernerKey!: EventsKey
   guid = ''
   readonly FLASH_DURATION = 5000
@@ -88,7 +88,7 @@ export default class JumpToGuid extends Vue {
       this.guid = guid
     }
 
-    const matchingFeatures: Feature<Geometry>[] = []
+    const matchingFeatures: MapFeature[] = []
     this.featureLayers.filter(layer => layer.getLayerType() !== FeatureLayerType.Collision)
       .map(layer =>
         layer
@@ -118,7 +118,7 @@ export default class JumpToGuid extends Vue {
     }
   }
 
-  private createFlashFeature (originalFeature: Feature<Geometry>) {
+  private createFlashFeature (originalFeature: MapFeature) {
     const geometryType = originalFeature.getGeometry()?.getType()
     const featureData: FlashFeatureData = {
       guid: this.guid,
@@ -134,7 +134,7 @@ export default class JumpToGuid extends Vue {
     return createFeature(FeatureType.Flash, featureData ,originalFeature.getGeometry())
   }
 
-  private activeLayer (feature: Feature<Geometry>) {
+  private activeLayer (feature: MapFeature) {
     const featureType = getFeatureType(feature)
     const layerType = getFeatureLayerByType(featureType)
     const matchLayer = this.featureLayers.find(layer => layer.getLayerType() === layerType)
@@ -149,7 +149,7 @@ export default class JumpToGuid extends Vue {
     return guid === '' || guid === 'DESELECTED'
   }
 
-  private flash (feature: Feature<Geometry>) {
+  private flash (feature: MapFeature) {
     const flashLayer = this.featureLayers.find(
       layer => layer.getLayerType() === FeatureLayerType.Flash
     )
@@ -186,7 +186,7 @@ export default class JumpToGuid extends Vue {
     })
   }
 
-  private createFlashStyle (feature: Feature<Geometry>, elapsedRatio: number, resolution: number) {
+  private createFlashStyle (feature: MapFeature, elapsedRatio: number, resolution: number) {
     const type = feature.getGeometry()?.getType()
     switch (type) {
       case 'Point':{
@@ -229,7 +229,7 @@ export default class JumpToGuid extends Vue {
   }
 
   private featureHasGuid (
-    feature: Feature<Geometry>,
+    feature: MapFeature,
     guid: string | null
   ): boolean {
     if (!guid) {

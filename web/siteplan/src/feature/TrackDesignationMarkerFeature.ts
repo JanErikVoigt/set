@@ -13,8 +13,6 @@ import { SiteplanState } from '@/model/SiteplanModel'
 import { getLabelColor } from '@/model/SiteplanObject'
 import Track, { TrackDesignation } from '@/model/Track'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
 
@@ -28,13 +26,13 @@ export default class TrackDesignationMarkerFeature extends LageplanFeature<Track
     return model.tracks
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).flatMap(track =>
       track?.designations?.map(designation =>
         this.createTrackDesignationFeature(track, designation)))
   }
 
-  private createTrackDesignationFeature (track: Track, designation: TrackDesignation): Feature<Geometry> {
+  private createTrackDesignationFeature (track: Track, designation: TrackDesignation): MapFeature {
     const feature = createFeature(
       FeatureType.TrackDesignationMarker,
       track,
@@ -59,7 +57,7 @@ export default class TrackDesignationMarkerFeature extends LageplanFeature<Track
     return feature
   }
 
-  setFeatureColor (feature: Feature<Geometry>): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature): MapFeature {
     return feature
   }
 }

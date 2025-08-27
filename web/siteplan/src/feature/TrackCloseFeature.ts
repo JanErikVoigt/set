@@ -13,9 +13,7 @@ import { getLabelColor } from '@/model/SiteplanObject'
 import { ISvgElement } from '@/model/SvgElement'
 import TrackClose, { TrackCloseType } from '@/model/TrackClose'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
 import { getCenter } from 'ol/extent'
-import { Geometry } from 'ol/geom'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
 import LageplanFeature from './LageplanFeature'
@@ -37,11 +35,11 @@ export default class TrackCloseFeature extends LageplanFeature<TrackClose> {
     )
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).map(trackClose => this.createTrackCloseFeature(trackClose))
   }
 
-  createTrackCloseFeature (trackClose: TrackClose): Feature<Geometry> {
+  createTrackCloseFeature (trackClose: TrackClose): MapFeature {
     const feature = createFeature(
       FeatureType.TrackClose,
       trackClose,
@@ -83,14 +81,14 @@ export default class TrackCloseFeature extends LageplanFeature<TrackClose> {
     }
   }
 
-  createTrackCloseBBox (feature: Feature<Geometry>, trackClose: TrackClose, svg: ISvgElement) {
+  createTrackCloseBBox (feature: MapFeature, trackClose: TrackClose, svg: ISvgElement) {
     svg.boundingBox.forEach(bbox => {
       const tranlsate = getCenter(bbox)
       LageplanFeature.createBBox(feature, trackClose.position, bbox, [tranlsate[0], -tranlsate[1]], [1, 1])
     })
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], trackClose => this.getObjectSvg(trackClose))
   }
 }

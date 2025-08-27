@@ -14,8 +14,6 @@ import { defaultStationObj, Platform, Station, StationPart } from '@/model/Stati
 import { centroid, midpoint, pointInDistance } from '@/util/Math'
 import { isLabelFlipRequired } from '@/util/ModelExtensions'
 import { getpropertypeName } from '@/util/ObjectExtension'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import Point from 'ol/geom/Point'
 import { Fill, Style, Text } from 'ol/style'
 import { createFeature, FeatureType, getFeatureData } from './FeatureInfo'
@@ -30,17 +28,17 @@ export default class StationFeature extends LageplanFeature<Station> {
     return model.stations
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).filter(element => element.label?.text)
       .map(element => this.createStationFeature(element))
   }
 
-  private createStationFeature (station: Station): Feature<Geometry> {
+  private createStationFeature (station: Station): MapFeature {
     const labelPositions = station.platforms.map(this.getStationLabelPosition)
     return this.createStationLabel(station, centroid(labelPositions))
   }
 
-  private createStationLabel (station: Station, position: number[]): Feature<Geometry> {
+  private createStationLabel (station: Station, position: number[]): MapFeature {
     const avgRotation = (
       station.platforms
         .map(platform => (platform.points[0].rotation + platform.points[1].rotation) / 2 + 90)
@@ -85,14 +83,14 @@ export default class StationFeature extends LageplanFeature<Station> {
     ), avgRotation, 5)
   }
 
-  setFeatureColor (feature: Feature<Geometry>, color?: number[] | undefined): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature, color?: number[] | undefined): MapFeature {
     return color
       ? super.setFeatureColor(feature, color)
       : this.setFeatureRegionColor(feature)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected setFeatureRegionColor (feature: Feature<Geometry>, featurePart?: string | undefined): Feature<Geometry> {
+  protected setFeatureRegionColor (feature: MapFeature, featurePart?: string | undefined): MapFeature {
     const station = getFeatureData(feature) as Station
     station.platforms.forEach(platform => {
       const regionColor = this.getRegionColor(feature, platform.guid)
@@ -108,7 +106,7 @@ export default class StationFeature extends LageplanFeature<Station> {
     return feature
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     const compareProps = [
       {
         prop: getpropertypeName(defaultStationObj(), x => x.label),

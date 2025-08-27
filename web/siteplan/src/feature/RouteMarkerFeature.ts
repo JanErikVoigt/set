@@ -12,8 +12,6 @@ import { KMMarker, Route } from '@/model/Route'
 import { SiteplanState } from '@/model/SiteplanModel'
 import { getLabelColor } from '@/model/SiteplanObject'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
-import Feature from 'ol/Feature'
-import Geometry from 'ol/geom/Geometry'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType, getFeatureData } from './FeatureInfo'
 
@@ -22,7 +20,7 @@ export default class RouteMarkerFeature extends LageplanFeature<Route> {
     return model.routes
   }
 
-  setFeatureColor (feature: Feature<Geometry>, color?: number[] | undefined): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature, color?: number[] | undefined): MapFeature {
     this.setObjectColor(
       getFeatureData(feature),
       'marker',
@@ -31,13 +29,13 @@ export default class RouteMarkerFeature extends LageplanFeature<Route> {
     return feature
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry> [] {
+  getFeatures (model: SiteplanState): MapFeature [] {
     return this.getObjectsModel(model).flatMap(route =>
       route?.markers?.flatMap(marker =>
         this.createRouteMarkerFeature(marker, route)))
   }
 
-  private createRouteMarkerFeature (marker: KMMarker, route: Route): Feature<Geometry> {
+  private createRouteMarkerFeature (marker: KMMarker, route: Route): MapFeature {
     const feature = createFeature(
       FeatureType.RouteMarker,
       marker,

@@ -10,8 +10,6 @@ import LageplanFeature from '@/feature/LageplanFeature'
 import { SiteplanState } from '@/model/SiteplanModel'
 import { getColor } from '@/model/SiteplanObject'
 import TrackSwitchEndMarker from '@/model/TrackSwitchEndMarker'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import Polygon from 'ol/geom/Polygon'
 import { Stroke, Style } from 'ol/style'
 import { createFeature, FeatureType } from './FeatureInfo'
@@ -26,11 +24,11 @@ export default class TrackSwitchEndMarkerFeature extends LageplanFeature<TrackSw
     return model.trackSwitchEndMarkers
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).map(marker => this.createTrackSwitchEndMarkerFeature(marker))
   }
 
-  private createTrackSwitchEndMarkerFeature (marker: TrackSwitchEndMarker): Feature<Geometry> {
+  private createTrackSwitchEndMarkerFeature (marker: TrackSwitchEndMarker): MapFeature {
     const coordinates: number[][] = [
       [marker.legACoordinate.x, marker.legACoordinate.y],
       [marker.legBCoordinate.x, marker.legBCoordinate.y]

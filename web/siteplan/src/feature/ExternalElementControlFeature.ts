@@ -13,8 +13,6 @@ import { SiteplanState } from '@/model/SiteplanModel'
 import { getLabelColor } from '@/model/SiteplanObject'
 import { ISvgElement } from '@/model/SvgElement'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
 import LageplanFeature from './LageplanFeature'
@@ -35,12 +33,12 @@ export default class ExternalElementControlFeature extends LageplanFeature<Exter
     )
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model)
       .map(ele => this.createExternalElementControlFeature(ele))
   }
 
-  private createExternalElementControlFeature (eec: ExternalElementControl): Feature<Geometry> {
+  private createExternalElementControlFeature (eec: ExternalElementControl): MapFeature {
     const feature = createFeature(
       FeatureType.ExternalElementControl,
       eec,
@@ -64,7 +62,7 @@ export default class ExternalElementControlFeature extends LageplanFeature<Exter
   }
 
   private createBBox (
-    feature: Feature<Geometry>,
+    feature: MapFeature,
     eec: ExternalElementControl,
     svg: ISvgElement
   ) {
@@ -73,7 +71,7 @@ export default class ExternalElementControlFeature extends LageplanFeature<Exter
     })
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], ecc => this.getObjectSvg(ecc))
   }
 }

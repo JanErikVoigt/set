@@ -1,8 +1,6 @@
 
 import { store } from '@/store'
 import { MapBrowserEvent } from 'ol'
-import Feature from 'ol/Feature'
-import Geometry from 'ol/geom/Geometry'
 import { Interaction } from 'ol/interaction'
 import { getFeatureGUIDs } from './FeatureExtensions'
 import PlanProToolbox from './PlanProToolbox'
@@ -14,7 +12,7 @@ import PlanProToolbox from './PlanProToolbox'
  * @author Stuecker
  */
 export default class FeatureClickInteraction extends Interaction {
-  lastClickedFeature: Feature<Geometry> | null = null
+  lastClickedFeature: MapFeature | null = null
   lastGUIDIndex = 0
 
   handleEvent (mapBrowserEvent: MapBrowserEvent<PointerEvent>): boolean {
@@ -34,11 +32,11 @@ export default class FeatureClickInteraction extends Interaction {
       return true
     }
 
-    this.handleFeatureClick(features[0] as Feature<Geometry>)
+    this.handleFeatureClick(features[0] as MapFeature)
     return true
   }
 
-  handleFeatureClick (feature: Feature<Geometry>): void {
+  handleFeatureClick (feature: MapFeature): void {
     if (store.state.measureEnable) {
       return
     }

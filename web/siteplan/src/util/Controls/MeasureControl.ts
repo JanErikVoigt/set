@@ -11,10 +11,10 @@
 
 import { FeatureLayerType } from '@/feature/FeatureInfo'
 import { store } from '@/store'
-import { Feature, Map, Overlay, View } from 'ol'
+import { Map, Overlay, View } from 'ol'
 import { Control } from 'ol/control'
 import { EventsKey } from 'ol/events'
-import { Geometry, LineString } from 'ol/geom'
+import { LineString } from 'ol/geom'
 import { Draw } from 'ol/interaction'
 import { DrawEvent } from 'ol/interaction/Draw'
 import { unByKey } from 'ol/Observable'
@@ -31,7 +31,7 @@ export default class MeasureControl extends Control {
   private map: Map
   private view: View
   private drawLineInteraction: Draw
-  private sketch: Feature<Geometry> | undefined | null
+  private sketch: MapFeature | undefined | null
   private measureTooltipElement: HTMLElement | undefined | null
   private measureTooltip!: Overlay
   private listerner!: EventsKey

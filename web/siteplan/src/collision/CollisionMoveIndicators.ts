@@ -9,8 +9,6 @@
 
 import { getFeatureData } from '@/feature/FeatureInfo'
 import { ModelType } from '@/feature/FeatureMetadata'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import LineString from 'ol/geom/LineString'
 import Point from 'ol/geom/Point'
 import { Fill, Stroke, Style, Text } from 'ol/style'
@@ -18,7 +16,7 @@ import OlStyle from 'ol/style/Style'
 
 export default class CollisionMoveIndicators {
   public createStyle (
-    feature: Feature<Geometry>,
+    feature: MapFeature,
     linePoints: (number[] | null)[],
     originalStyle: OlStyle | OlStyle[] | void,
     scale: number
@@ -33,7 +31,7 @@ export default class CollisionMoveIndicators {
           linePoints[0],
           linePoints[1],
           scale,
-          getFeatureData(feature as Feature<Geometry>)
+          getFeatureData(feature as MapFeature)
         )
       )
     }

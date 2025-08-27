@@ -11,8 +11,6 @@ import LageplanFeature from '@/feature/LageplanFeature'
 import { SiteplanState } from '@/model/SiteplanModel'
 import { Platform, Station, StationPart } from '@/model/Station'
 import { isLabelFlipRequired } from '@/util/ModelExtensions'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 
 import { getColor, getLabelColor } from '@/model/SiteplanObject'
 import { midpoint, pointInDistance } from '@/util/Math'
@@ -27,7 +25,7 @@ import { createFeature, FeatureType } from './FeatureInfo'
  * @author Stuecker
  */
 export default class PlatformFaature extends LageplanFeature<Station> {
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).flatMap(station =>
       station.platforms.flatMap(platform =>
         this.createPlatformFeature(station, platform)))
@@ -37,7 +35,7 @@ export default class PlatformFaature extends LageplanFeature<Station> {
     return model.stations
   }
 
-  private createPlatformFeature (station: Station, platform: Platform): Feature<Geometry>[] {
+  private createPlatformFeature (station: Station, platform: Platform): MapFeature[] {
     // First line, parallel to the tracks
     const points = platform.points.map(point => [point.x, point.y])
     // Second line parallel to the tracks, offset by 0.5
@@ -52,7 +50,7 @@ export default class PlatformFaature extends LageplanFeature<Station> {
       { line: points4, color: getColor(station, `${StationPart.FourLine}_${platform.guid}`) }
     ]
 
-    const features: Feature<Geometry>[] = platformPoints.map(points => {
+    const features: MapFeature[] = platformPoints.map(points => {
       const feature = createFeature(
         FeatureType.Platform,
         platform,
@@ -115,7 +113,7 @@ export default class PlatformFaature extends LageplanFeature<Station> {
     ), avgRotation, 5)
   }
 
-  setFeatureColor (feature: Feature<Geometry>): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature): MapFeature {
     return feature
   }
 }

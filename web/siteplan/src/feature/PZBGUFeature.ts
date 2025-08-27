@@ -13,9 +13,7 @@ import { getColor } from '@/model/SiteplanObject'
 import { angle, midpoint, pointInDistance, toDeg } from '@/util/Math'
 import { isLabelFlipRequired } from '@/util/ModelExtensions'
 import { PolygonBuilder } from '@/util/PolygonBuilder'
-import { Feature } from 'ol'
 import { Coordinate } from 'ol/coordinate'
-import Geometry from 'ol/geom/Geometry'
 import LineString from 'ol/geom/LineString'
 import Point from 'ol/geom/Point'
 import Polygon from 'ol/geom/Polygon'
@@ -30,7 +28,7 @@ import PZBFeature from './PZBFeature'
  * @author Stuecker
  */
 export default class PZBGUFeature extends PZBFeature {
-  createPZBGUFeature (pzbGU: PZBGU): Feature<Geometry>[] {
+  createPZBGUFeature (pzbGU: PZBGU): MapFeature[] {
     const pzbFeatures = pzbGU.pzbs.map(pzb => {
       return this.createPZBComponentFeature(pzb)
     })

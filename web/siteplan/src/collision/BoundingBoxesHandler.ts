@@ -8,20 +8,18 @@
  */
 
 import { getFeatureBoundArea, getFeatureData } from '@/feature/FeatureInfo'
-import { Feature } from 'ol'
 import { getCenter } from 'ol/extent'
 import { Polygon } from 'ol/geom'
-import Geometry from 'ol/geom/Geometry'
 import GeometryCollection from 'ol/geom/GeometryCollection'
 import { Rectangle } from './CollisionExtension'
 
 export default class BoundingBoxesHandler {
   public rescaleBoundingBoxes (
-    bboxFeatures: Feature<Geometry>[],
+    bboxFeatures: MapFeature[],
     oldScale: number,
     newScale: number
-  ): Feature<Geometry>[] {
-    const clone = Array<Feature<Geometry>>().concat(bboxFeatures)
+  ): MapFeature[] {
+    const clone = Array<MapFeature>().concat(bboxFeatures)
     const scaleFactor = newScale / oldScale
     clone.forEach(feature => {
       const featureData = getFeatureData(feature)

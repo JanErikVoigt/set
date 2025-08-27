@@ -19,8 +19,6 @@ import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions
 import { compare } from '@/util/ObjectExtension'
 import { PolygonBuilder } from '@/util/PolygonBuilder'
 import SvgDrawTrackSwitch from '@/util/SVG/Draw/SvgDrawTrackSwitch'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
 import LineString from 'ol/geom/LineString'
 import Point from 'ol/geom/Point'
 import Polygon from 'ol/geom/Polygon'
@@ -45,11 +43,11 @@ export default class TrackSwitchFeature extends LageplanFeature<TrackSwitch> {
     return model.trackSwitches
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return model.trackSwitches.flatMap(tswitch => this.createTrackSwitchFeature(tswitch))
   }
 
-  private createTrackSwitchFeature (tswitch: TrackSwitch): Feature<Geometry>[] {
+  private createTrackSwitchFeature (tswitch: TrackSwitch): MapFeature[] {
     const features = tswitch.components.map(x => this.createTrackSwitchComponentFeature(tswitch, x))
     if (!tswitch.continuousSegments) {
       tswitch.continuousSegments = []
@@ -61,7 +59,7 @@ export default class TrackSwitchFeature extends LageplanFeature<TrackSwitch> {
     return features.concat(continuousSegmentFeatures)
   }
 
-  private createTrackSwitchComponentFeature (tswitch: TrackSwitch, component: TrackSwitchComponent): Feature<Geometry> {
+  private createTrackSwitchComponentFeature (tswitch: TrackSwitch, component: TrackSwitchComponent): MapFeature {
     const coordinates: number[][] = []
 
     // As we define a polygon from a line of the outer shell coordinates, the
@@ -279,7 +277,7 @@ export default class TrackSwitchFeature extends LageplanFeature<TrackSwitch> {
     return positiveDistance > negativeDistance ? positivePoint : negativePoint
   }
 
-  setFeatureColor (feature: Feature<Geometry>, color?: number[], id?: string): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature, color?: number[], id?: string): MapFeature {
     if (color) {
       super.setFeatureColor(feature, color, id)
     } else {
@@ -291,7 +289,7 @@ export default class TrackSwitchFeature extends LageplanFeature<TrackSwitch> {
     return feature
   }
 
-  protected setFeatureRegionColor (feature: Feature<Geometry>, featurePart?: string | undefined): Feature<Geometry> {
+  protected setFeatureRegionColor (feature: MapFeature, featurePart?: string | undefined): MapFeature {
     const featureData = getFeatureData(feature) as TrackSwitchFeatureData
     featureData.trackSwitch.components.forEach(component => {
       const componentRegionColor = this.getRegionColor(feature, component.guid)
@@ -301,7 +299,7 @@ export default class TrackSwitchFeature extends LageplanFeature<TrackSwitch> {
     return feature
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     let isDiff = false
     this.getObjectsModel(initial).forEach(initialTrackSwitch => {
       const finalTrackSwitch = this.getObjectsModel(final).find(ele => ele.guid === initialTrackSwitch.guid)

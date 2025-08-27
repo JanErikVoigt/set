@@ -10,8 +10,7 @@
 import { LayoutInfo, SheetCut } from '@/model/LayoutInfo'
 import { SiteplanState } from '@/model/SiteplanModel'
 import SvgDraw from '@/util/SVG/Draw/SvgDraw'
-import { Feature } from 'ol'
-import { Geometry, Polygon } from 'ol/geom'
+import { Polygon } from 'ol/geom'
 import LineString from 'ol/geom/LineString'
 import Point from 'ol/geom/Point'
 import { Icon, Stroke, Style } from 'ol/style'
@@ -34,14 +33,14 @@ export default class LayoutInfoFeature extends LageplanFeature<LayoutInfo> {
     throw new Error('Method not implemented.')
   }
 
-  public getLayoutFeatures (layoutInfos: LayoutInfo[]): Feature<Geometry>[] {
-    const result: Feature<Geometry>[] = layoutInfos.flatMap(layout =>
+  public getLayoutFeatures (layoutInfos: LayoutInfo[]): MapFeature[] {
+    const result: MapFeature[] = layoutInfos.flatMap(layout =>
       layout.sheetsCut.flatMap(sheetCut =>
         this.createSheetCutFeatures(layout.label, sheetCut)))
     return result
   }
 
-  private createSheetCutFeatures (label: string, sheetCut: SheetCut) : Feature<Geometry>{
+  private createSheetCutFeatures (label: string, sheetCut: SheetCut) : MapFeature{
     const directionLine = new LineString(
       sheetCut.polygonDirection
         .map(coor => [coor.x ,coor.y])

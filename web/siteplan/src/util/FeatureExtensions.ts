@@ -16,14 +16,12 @@ import { Signal } from '@/model/Signal'
 import { SignalMount } from '@/model/SignalMount'
 import TrackClose from '@/model/TrackClose'
 import { FeatureCollection, Feature as GeoJSONFeature, GeometryCollection as GeoJSONGeometryCollection } from 'geojson'
-import { Feature } from 'ol'
 import GeoJSON from 'ol/format/GeoJSON'
-import Geometry from 'ol/geom/Geometry'
 import GeometryCollection from 'ol/geom/GeometryCollection'
 import LineString from 'ol/geom/LineString'
 import { getSignalPrio } from './SignalExtension'
 
-export function getFeatureGUIDs (feature: Feature<Geometry>): string[] {
+export function getFeatureGUIDs (feature: MapFeature): string[] {
   const name = getFeatureType(feature)
   switch (name) {
     case FeatureType.PZB:
@@ -90,7 +88,7 @@ export function getFeatureGUIDs (feature: Feature<Geometry>): string[] {
   }
 }
 
-export function getFeaturePosition (feature: Feature<Geometry>): Position[] | Coordinate[] {
+export function getFeaturePosition (feature: MapFeature): Position[] | Coordinate[] {
   const type = getFeatureType(feature)
   switch (type) {
     case FeatureType.PZB:
@@ -133,7 +131,7 @@ export function getFeaturePosition (feature: Feature<Geometry>): Position[] | Co
  * @param featureB the feature
  * @returns true/false
  */
-export function isFeaturesIntersect (featureA: Feature<Geometry>, featureB: Feature<Geometry>): boolean {
+export function isFeaturesIntersect (featureA: MapFeature, featureB: MapFeature): boolean {
   const geometryA = featureA.getGeometry()
   const geometryB = featureB.getGeometry()
   if (!geometryA || !geometryB) {
@@ -162,7 +160,7 @@ export function isFeaturesIntersect (featureA: Feature<Geometry>, featureB: Feat
  * @param features list features
  * @returns sort list features
  */
-export function sortFeaturesByPrio (features: Feature<Geometry>[]): Feature<Geometry>[] {
+export function sortFeaturesByPrio (features: MapFeature[]): MapFeature[] {
   return features.sort((a, b) => {
     const aFeature = getFeatureData(a)?.refFeature || a
     const bFeature = getFeatureData(b)?.refFeature || b
@@ -193,7 +191,7 @@ export function sortFeaturesByPrio (features: Feature<Geometry>[]): Feature<Geom
  * @param features openlayer features
  * @returns collection of GeoJSON Features
  */
-export function getGeoPolygons (features: Feature<Geometry>[]): FeatureCollection {
+export function getGeoPolygons (features: MapFeature[]): FeatureCollection {
   const geojson = new GeoJSON()
   let polygonFeatures = features.map(f => geojson.writeFeatureObject(f))
   polygonFeatures = polygonFeatures.flatMap(feature => {

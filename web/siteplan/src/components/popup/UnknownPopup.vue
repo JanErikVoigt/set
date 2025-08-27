@@ -23,7 +23,7 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 
 const props = defineProps<{
-  feature: Feature<Geometry>
+  feature: MapFeature
 }>()
 
 const object = computed(() => {

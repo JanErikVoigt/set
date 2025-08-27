@@ -208,7 +208,7 @@ export default class FeatureService extends Vue {
   private loadFeatureType (
     model: SiteplanModel,
     featureClass: ILageplanFeature
-  ): Feature<Geometry>[] {
+  ): MapFeature[] {
     try {
       // eslint-disable-next-line default-case
       switch (store.state.sessionState) {
@@ -272,7 +272,7 @@ export default class FeatureService extends Vue {
   private loadDelayedFeatureType (
     model: SiteplanModel,
     featureClass: ILageplanFeature
-  ): Feature<Geometry>[] {
+  ): MapFeature[] {
     try {
       if (featureClass != null) {
         return featureClass

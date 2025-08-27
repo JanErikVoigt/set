@@ -56,7 +56,7 @@ export default class FeatureInfoPopup extends Vue {
   featureLayers!: NamedFeatureLayer[]
   mouseDownButton: LeftRight | null = null
   infoPopup: Overlay | null = null
-  selectedFeatures: Collection<Feature<Geometry>> = new Collection()
+  selectedFeatures: Collection<MapFeature> = new Collection()
   featureSelectionKey = 0
   readonly existPopupFeature = [
     FeatureType.Signal,
@@ -122,8 +122,8 @@ export default class FeatureInfoPopup extends Vue {
     return uniqueFeatures
   }
 
-  filterSameFeature (features: Feature<Geometry>[]): Array<Feature<Geometry>> {
-    const result: Feature<Geometry>[] = []
+  filterSameFeature (features: MapFeature[]): Array<MapFeature> {
+    const result: MapFeature[] = []
     features.forEach(feature => {
       const featureType = getFeatureType(feature)
       const featuresSameType = result.filter(ele =>
@@ -142,7 +142,7 @@ export default class FeatureInfoPopup extends Vue {
     return result
   }
 
-  hasPopup (feature: Feature<Geometry>): boolean {
+  hasPopup (feature: MapFeature): boolean {
     const existInfoPop = this.mouseDownButton === LeftRight.LEFT &&
       this.existPopupFeature.includes(getFeatureType(feature))
     const existGUID = this.mouseDownButton === LeftRight.RIGHT &&

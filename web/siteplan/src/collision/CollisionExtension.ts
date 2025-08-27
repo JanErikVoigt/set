@@ -8,11 +8,10 @@
  */
 
 import { FeatureType, getFeatureData, getFeatureType } from '@/feature/FeatureInfo'
-import { lineString as turfLineString, polygon as turfPolygon } from '@turf/helpers'
-import booleanWithin from '@turf/boolean-within'
 import booleanDisjoint from '@turf/boolean-disjoint'
+import booleanWithin from '@turf/boolean-within'
+import { lineString as turfLineString, polygon as turfPolygon } from '@turf/helpers'
 
-import { Feature } from 'ol'
 import { getCenter } from 'ol/extent'
 import Geometry from 'ol/geom/Geometry'
 import LinearRing from 'ol/geom/LinearRing'
@@ -144,7 +143,7 @@ export function isIntersectionLineString (a: Polygon, b: LineString): boolean {
  * @param feature the feature
  * @returns true, if the feature is immovable
  */
-export function isImmovableFeature (feature: Feature<Geometry>): boolean {
+export function isImmovableFeature (feature: MapFeature): boolean {
   const featureData = getFeatureData(feature)
   if (featureData) {
     const type = getFeatureType(featureData.refFeature)

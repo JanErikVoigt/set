@@ -14,9 +14,8 @@ import NamedFeatureLayer from '@/util/NamedFeatureLayer'
 import { compare } from '@/util/ObjectExtension'
 import SvgDraw from '@/util/SVG/Draw/SvgDraw'
 import axios from 'axios'
-import { Feature, Map as OlMap } from 'ol'
+import { Map as OlMap } from 'ol'
 import { Extent, getHeight, getWidth } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
 import Polygon, { fromExtent } from 'ol/geom/Polygon'
 import { Position } from '../model/Position'
 import { isPlanningObject, SiteplanColorValue, SiteplanState } from '../model/SiteplanModel'
@@ -37,11 +36,11 @@ import {
 export interface ILageplanFeature {
   svgService: SvgService
   map: OlMap
-  getDelayedFeatures(model: SiteplanState, layers: NamedFeatureLayer[]): Feature<Geometry>[]
+  getDelayedFeatures(model: SiteplanState, layers: NamedFeatureLayer[]): MapFeature[]
   getDelayedFeatureOrder(): number
-  getFeatures(model: SiteplanState): Feature<Geometry>[]
-  compareChangedState(initial: SiteplanState, final: SiteplanState): Feature<Geometry>[]
-  setFeatureColor(feature: Feature<Geometry>, color?: number[]): Feature<Geometry>
+  getFeatures(model: SiteplanState): MapFeature[]
+  compareChangedState(initial: SiteplanState, final: SiteplanState): MapFeature[]
+  setFeatureColor(feature: MapFeature, color?: number[]): MapFeature
 }
 
 export default abstract class LageplanFeature<T extends SiteplanObject> implements ILageplanFeature {
@@ -59,13 +58,13 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
 
   // Default implementation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getDelayedFeatures (model: SiteplanState, layers: NamedFeatureLayer[]): Feature<Geometry>[] {
+  getDelayedFeatures (model: SiteplanState, layers: NamedFeatureLayer[]): MapFeature[] {
     return []
   }
 
   // Default implementation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return []
   }
 
@@ -76,7 +75,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
     compareValue?: {prop: string, partID?: string,}[],
     svgFunction?: ((object: T) => ISvgElement),
     objectPart?: string[]
-  ): Feature<Geometry>[] {
+  ): MapFeature[] {
     // When position of object is different, then return initail and final features
     const diffPosition = this.compareChangeModel(initial, final, [
       {
@@ -265,7 +264,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
     return isDiff
   }
 
-  protected createCompareFeatures (initial: SiteplanState, final: SiteplanState) : Feature<Geometry>[] {
+  protected createCompareFeatures (initial: SiteplanState, final: SiteplanState) : MapFeature[] {
     const initialFeatures = this.getFeatures(initial)
     const finalFeatures = this.getFeatures(final)
     return initialFeatures.map(initialFeature => {
@@ -275,7 +274,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
       }
 
       return this.mergeFeatures(initialFeature, finalFeature)
-    }).filter(x => x !== null) as Feature<Geometry>[]
+    }).filter(x => x !== null) as MapFeature[]
   }
 
   /**
@@ -284,7 +283,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
    * @param final the final features
    * @returns combine feature
    */
-  protected mergeFeatures (initial: Feature<Geometry>, final: Feature<Geometry>): Feature<Geometry> | null {
+  protected mergeFeatures (initial: MapFeature, final: MapFeature): MapFeature | null {
     if (getFeatureType(initial) !== getFeatureType(final) ||
     getFeatureGUID(initial) !== getFeatureGUID(final)) {
       return null
@@ -323,14 +322,14 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
     return final
   }
 
-  resetFeatureColor (feature: Feature<Geometry>): Feature<Geometry> {
+  resetFeatureColor (feature: MapFeature): MapFeature {
     const object = getFeatureData(feature) as SiteplanObject
     object.objectColors = []
     return feature
   }
 
   // Default implementation
-  setFeatureColor (feature: Feature<Geometry>, color?: number[], partID?: string): Feature<Geometry> {
+  setFeatureColor (feature: MapFeature, color?: number[], partID?: string): MapFeature {
     this.setObjectColor(
       getFeatureData(feature) as SiteplanObject,
       partID ?? 'feature',
@@ -340,7 +339,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
   }
 
   // Default implementation
-  protected setFeatureRegionColor (feature: Feature<Geometry>, featurePart?: string): Feature<Geometry> {
+  protected setFeatureRegionColor (feature: MapFeature, featurePart?: string): MapFeature {
     this.setObjectColor(
       getFeatureData(feature) as SiteplanObject,
       featurePart ?? 'feature',
@@ -354,7 +353,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
    * @param feature the feature
    * @returns color of feature
    */
-  protected getRegionColor (feature: Feature<Geometry>, guid?: string): number[] {
+  protected getRegionColor (feature: MapFeature, guid?: string): number[] {
     return !isPlanningObject(guid ?? getFeatureGUID(feature)) &&
       Configuration.developmentMode()
       ? SiteplanColorValue.COLOR_UNCHANGED_VIEW
@@ -402,7 +401,7 @@ export default abstract class LageplanFeature<T extends SiteplanObject> implemen
   }
 
   protected static createBBox (
-    feature:Feature<Geometry>,
+    feature:MapFeature,
     position: Position,
     bbox: Extent,
     translate: number[],

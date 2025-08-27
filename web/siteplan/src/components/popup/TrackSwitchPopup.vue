@@ -72,7 +72,7 @@ import { isPlanningObject } from '@/model/SiteplanModel'
   }
 })
 export default class TrackSwitchPopup extends Vue {
-  feature!: Feature<Geometry>
+  feature!: MapFeature
   trackSwitch!: TrackSwitch
   trackSwitchComponent!: TrackSwitchComponent
   planningObject!: string

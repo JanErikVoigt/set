@@ -16,9 +16,7 @@ import TrackLock, { TrackLockComponent, TrackLockLocation } from '@/model/TrackL
 import { angle, midpoint } from '@/util/Math'
 import { updateLabelColor, updateLabelOrientation } from '@/util/ModelExtensions'
 import SvgDrawTracklock from '@/util/SVG/Draw/SvgDrawTracklock'
-import { Feature } from 'ol'
 import { Extent, getHeight, getWidth } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
 import Point from 'ol/geom/Point'
 import { FeatureType, createFeature } from './FeatureInfo'
 
@@ -31,11 +29,11 @@ export default class TrackLockFeature extends LageplanFeature<TrackLock> {
     return this.svgService.getFeatureSvg(tracklock, FeatureType.TrackLock, tracklock.label)
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return model.trackLock.map(ele => this.createTrackLockFeature(ele))
   }
 
-  private createTrackLockFeature (trackLock: TrackLock): Feature<Geometry> {
+  private createTrackLockFeature (trackLock: TrackLock): MapFeature {
     const position = this.getTrackLockPosition(trackLock.components)
     const feature = createFeature(
       FeatureType.TrackLock,
@@ -84,7 +82,7 @@ export default class TrackLockFeature extends LageplanFeature<TrackLock> {
   }
 
   private createTrackLockBBox (
-    feature: Feature<Geometry>,
+    feature: MapFeature,
     trackLock: TrackLock,
     pos: Position,
     trackLockSvg: ISvgElement,
@@ -139,7 +137,7 @@ export default class TrackLockFeature extends LageplanFeature<TrackLock> {
     })
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], trackLock => this.getObjectSvg(trackLock))
   }
 }

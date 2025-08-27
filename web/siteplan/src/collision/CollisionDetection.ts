@@ -28,10 +28,10 @@ export default class CollisionDetection {
   /**
    * @returns a list of collisions between groups of features
    */
-  public getCollisions (bboxFeatures: Feature<Geometry>[]): Collision[] {
+  public getCollisions (bboxFeatures: MapFeature[]): Collision[] {
     const layer = new VectorSource<Geometry>()
     layer.addFeatures(bboxFeatures)
-    const featuresIntersectExtent = new Array<Feature<Geometry>[]>()
+    const featuresIntersectExtent = new Array<MapFeature[]>()
     const collisions: Collision[] = []
 
     bboxFeatures.forEach(feature => {
@@ -87,9 +87,9 @@ export default class CollisionDetection {
    */
   private getIntersectFeaturesByExtent (
     layer: VectorSource<Geometry>,
-    feature: Feature<Geometry>
-  ) : Feature<Geometry>[] {
-    const overlapFeatures = new Array<Feature<Geometry>>()
+    feature: MapFeature
+  ) : MapFeature[] {
+    const overlapFeatures = new Array<MapFeature>()
     if (feature.getGeometry()) {
       layer.forEachFeatureInExtent((feature.getGeometry() as Geometry).getExtent(), ele => {
         overlapFeatures.push(ele)
@@ -99,7 +99,7 @@ export default class CollisionDetection {
     return overlapFeatures.filter((ele, index) => overlapFeatures.indexOf(ele) === index)
   }
 
-  private getCollisionForFeature (feature: Feature<Geometry>, collisions: Collision[]) {
+  private getCollisionForFeature (feature: MapFeature, collisions: Collision[]) {
     return collisions.find(c => c.includes(feature))
   }
 
@@ -110,7 +110,7 @@ export default class CollisionDetection {
    * @returns inner intersection features
    */
   private getIntersectFeatures (extentIntersection: Collision): Collision {
-    const innerIntersect = new Array<Feature<Geometry>>()
+    const innerIntersect = new Array<MapFeature>()
     extentIntersection.forEach((currentfeature, index) => {
       if (index + 1 >= extentIntersection.length) {
         return
@@ -144,7 +144,7 @@ export default class CollisionDetection {
    * @param radius
    * @returns a list of relevant features
    */
-  public getRelevantFeaturesInRadius (features: Feature<Geometry>[], center: number[], radius: number) {
+  public getRelevantFeaturesInRadius (features: MapFeature[], center: number[], radius: number) {
     return features.filter(x => {
       const extent = x.getGeometry()?.getExtent()
       if (!extent) {
@@ -197,7 +197,7 @@ export default class CollisionDetection {
    * @returnsa list of outline features which are relevant
    */
   public getRelevantOutlineFeaturesInRadius (
-    outlineFeatures: Feature<Geometry>[],
+    outlineFeatures: MapFeature[],
     relevantTrackFeatures: Line[][],
     point: number[],
     radius: number

@@ -11,11 +11,9 @@ import LageplanFeature from '@/feature/LageplanFeature'
 
 import { SiteplanState } from '@/model/SiteplanModel'
 import { ISvgElement } from '@/model/SvgElement'
-import { Feature } from 'ol'
-import Geometry from 'ol/geom/Geometry'
+import UnknownObject from '@/model/UnknownObject'
 import OlPoint from 'ol/geom/Point'
 import { createFeature, FeatureType } from './FeatureInfo'
-import UnknownObject from '@/model/UnknownObject'
 
 /**
  * Container for all Cant features
@@ -29,11 +27,11 @@ export default class UnknownObjectFeature extends LageplanFeature<UnknownObject>
     return this.svgService.getFeatureSvg(model, FeatureType.Unknown)
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     return this.getObjectsModel(model).flatMap(element => this.createUnknownFeature(element))
   }
 
-  private createUnknownFeature (object: UnknownObject): Feature<Geometry> {
+  private createUnknownFeature (object: UnknownObject): MapFeature {
     const feature = createFeature(
       FeatureType.Unknown,
       object,
@@ -62,7 +60,7 @@ export default class UnknownObjectFeature extends LageplanFeature<UnknownObject>
     return feature
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     return super.compareChangedState(initial, final, [], unknowObject => this.getObjectSvg(unknowObject))
   }
 }

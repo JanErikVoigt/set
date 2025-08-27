@@ -144,12 +144,12 @@ import { Options, Vue } from 'vue-class-component'
 })
 
 export default class MenuPopup extends Vue {
-  features!: Feature<Geometry>[]
+  features!: MapFeature[]
   selectedPopup!: Vue
   mouseButton!: string
-  selectedFeature: Feature<Geometry> | null = null
+  selectedFeature: MapFeature | null = null
 
-  getFeatures (): Feature<Geometry>[] {
+  getFeatures (): MapFeature[] {
     if (this.features === null || !this.features) {
       return []
     }
@@ -174,11 +174,11 @@ export default class MenuPopup extends Vue {
     })
   }
 
-  getFeatureName (feature: Feature<Geometry>): string {
+  getFeatureName (feature: MapFeature): string {
     return getFeatureName(getFeatureType(feature))
   }
 
-  getLabel (feature: Feature<Geometry>): string {
+  getLabel (feature: MapFeature): string {
     return getFeatureLabel(feature)
   }
 
@@ -196,7 +196,7 @@ export default class MenuPopup extends Vue {
     this.selectedFeature = null
   }
 
-  selectedItem (feature: Feature<Geometry>) {
+  selectedItem (feature: MapFeature) {
     this.selectedFeature = feature
   }
 }

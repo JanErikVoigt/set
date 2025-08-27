@@ -18,10 +18,8 @@ import { PlanProModelType, store } from '@/store'
 import Configuration from '@/util/Configuration'
 import { getMapScale } from '@/util/MapScale'
 import { compare, getpropertypeName } from '@/util/ObjectExtension'
-import { Feature } from 'ol'
 import { Coordinate as OlCoordinate } from 'ol/coordinate'
 import { LineString } from 'ol/geom'
-import Geometry from 'ol/geom/Geometry'
 import Polygon from 'ol/geom/Polygon'
 import { Fill, Stroke, Style } from 'ol/style'
 import { createFeature, FeatureType, getFeatureData, getFeatureGUID, getFeatureType } from './FeatureInfo'
@@ -48,7 +46,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
     return model.tracks
   }
 
-  getFeatures (model: SiteplanState): Feature<Geometry>[] {
+  getFeatures (model: SiteplanState): MapFeature[] {
     store.commit('defaultTrackWidth', Configuration.getTrackWidth())
     return model.tracks.flatMap(track =>
       track?.sections.flatMap(section =>
@@ -59,7 +57,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
     track: Track,
     trackSection: TrackSection,
     trackSegment: TrackSegment
-  ): Feature<Geometry>[] {
+  ): MapFeature[] {
     return [
       this.createTrackSectionFeature(
         track,
@@ -74,7 +72,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
     guid: string,
     trackSection: TrackSection,
     trackSegment: TrackSegment
-  ): Feature<Geometry> {
+  ): MapFeature {
     const coordinates: OlCoordinate[] = []
     trackSegment.positions.forEach((position: Coordinate) => coordinates.push([position.x, position.y]))
     if (coordinates.length < 1) {
@@ -122,7 +120,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
     track: Track,
     trackSection: TrackSection,
     trackSegment: TrackSegment
-  ): Feature<Geometry> {
+  ): MapFeature {
     const coordinates: OlCoordinate[] = []
     if (store.state.planproModelType === PlanProModelType.OVERVIEWPLAN) {
       trackSection.segments.forEach(segment =>
@@ -260,16 +258,16 @@ export default class TrackFeature extends LageplanFeature<Track> {
   }
 
   setFeatureColor (
-    feature: Feature<Geometry>,
+    feature: MapFeature,
     color?: number[] | undefined,
     partID?: string | undefined
-  ): Feature<Geometry> {
+  ): MapFeature {
     return color
       ? super.setFeatureColor(feature, color, partID)
       : this.setFeatureRegionColor(feature)
   }
 
-  protected setFeatureRegionColor (feature: Feature<Geometry>): Feature<Geometry> {
+  protected setFeatureRegionColor (feature: MapFeature): MapFeature {
     const trackfeatureData = getFeatureData(feature) as TrackSectionFeatureData
     if (!trackfeatureData.track) {
       return feature
@@ -284,7 +282,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
     return feature
   }
 
-  compareChangedState (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  compareChangedState (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     const isDiffDesignation = this.compareChangeModel(initial, final, [
       {
         prop: getpropertypeName(defaultTrackObj(), x => x.designations),
@@ -323,13 +321,13 @@ export default class TrackFeature extends LageplanFeature<Track> {
       : this.getFeatures(final)
   }
 
-  protected createCompareFeatures (initial: SiteplanState, final: SiteplanState): Feature<Geometry>[] {
+  protected createCompareFeatures (initial: SiteplanState, final: SiteplanState): MapFeature[] {
     // Grouped section feature by track
     const initialFeatureGroups = this.getFeatures(initial)
       .groupBy(feature => getFeatureGUID(feature))
     const finalFeatureGroups = this.getFeatures(final)
       .groupBy(feature => getFeatureGUID(feature))
-    const result: Feature<Geometry>[] = []
+    const result: MapFeature[] = []
     Object.entries(initialFeatureGroups).forEach(initialGroup => {
       const trackID = initialGroup[0]
       const finalFeatureGroup = Object.entries(finalFeatureGroups).find(finalGroup =>
@@ -365,7 +363,7 @@ export default class TrackFeature extends LageplanFeature<Track> {
     return result
   }
 
-  private getFeatureSectionGuid (feature: Feature<Geometry>): string | undefined {
+  private getFeatureSectionGuid (feature: MapFeature): string | undefined {
     if (getFeatureType(feature) !== FeatureType.Track) {
       return undefined
     }

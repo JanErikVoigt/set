@@ -6,9 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
  */
-import { Feature } from 'ol'
-import { Extent, getHeight, getWidth, getBottomLeft, createEmpty, extend, getTopLeft, boundingExtent, getCenter } from 'ol/extent'
-import Geometry from 'ol/geom/Geometry'
+import { boundingExtent, createEmpty, extend, Extent, getBottomLeft, getCenter, getHeight, getTopLeft, getWidth } from 'ol/extent'
 
 /**
  * Extension for {@link Extent} class for Svg Element
@@ -116,7 +114,7 @@ export function removeHTMLElement (root: Element, elementToRemove: Element | HTM
   }
 }
 
-export function getExtent (features: Feature<Geometry>[]): Extent {
+export function getExtent (features: MapFeature[]): Extent {
   // Only fit if features exist
   if (features.length === 0) {
     return createEmpty()

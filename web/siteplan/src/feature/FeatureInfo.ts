@@ -8,9 +8,9 @@
  */
 import { Rectangle } from '@/collision/CollisionExtension'
 import ModelError from '@/model/Error'
-import Feature from 'ol/Feature'
 import { Geometry, Polygon } from 'ol/geom'
 import FeatureMetadata, { ModelType } from './FeatureMetadata'
+import MapFeature from './MapFeature'
 
 export enum FeatureType {
   Signal,
@@ -188,7 +188,7 @@ export function getFeatureName (type: FeatureType): string {
   }
 }
 
-export function getFeatureMovePriority (feature: Feature<Geometry>) {
+export function getFeatureMovePriority (feature: MapFeature) {
   const type = getFeatureType(feature)
   switch (type) {
     case FeatureType.Signal:
@@ -218,19 +218,19 @@ export function getFeatureMovePriority (feature: Feature<Geometry>) {
   }
 }
 
-export function getFeatureType (feature: Feature<Geometry>): FeatureType {
+export function getFeatureType (feature: MapFeature): FeatureType {
   return (feature.get('data') as FeatureMetadata).type
 }
 
-export function getFeatureBounds (feature: Feature<Geometry>): Polygon[] {
+export function getFeatureBounds (feature: MapFeature): Polygon[] {
   return (feature.get('data') as FeatureMetadata).bounds
 }
 
-export function getFeatureBoundArea (feature: Feature<Geometry>): Rectangle[] {
+export function getFeatureBoundArea (feature: MapFeature): Rectangle[] {
   return (feature.get('data') as FeatureMetadata).boundRectangle
 }
 
-export function getFeatureLabel (feature: Feature<Geometry>): string {
+export function getFeatureLabel (feature: MapFeature): string {
   if (getFeatureType(feature) === FeatureType.Error) {
     return (getFeatureData(feature) as ModelError).message
   }
@@ -243,7 +243,7 @@ export function getFeatureLabel (feature: Feature<Geometry>): string {
   return label
 }
 
-export function getFeatureLayer (feature: Feature<Geometry>): FeatureLayerType {
+export function getFeatureLayer (feature: MapFeature): FeatureLayerType {
   return getFeatureLayerByType(getFeatureType(feature))
 }
 
@@ -252,8 +252,8 @@ export function createFeature (
   model: ModelType,
   geometry: Geometry | undefined,
   label?: string
-) : Feature<Geometry> {
-  return new Feature<Geometry>(
+) : MapFeature {
+  return new MapFeature(
     {
       name: getFeatureName(type),
       data: new FeatureMetadata(model, type, label),
@@ -262,15 +262,15 @@ export function createFeature (
   )
 }
 
-export function getFeatureData (feature: Feature<Geometry>): ModelType {
+export function getFeatureData (feature: MapFeature): ModelType {
   return (feature.get('data') as FeatureMetadata)?.model
 }
 
-export function getFeatureGUID (feature: Feature<Geometry>): ModelType {
+export function getFeatureGUID (feature: MapFeature): ModelType {
   return (feature.get('data') as FeatureMetadata)?.guid
 }
 
 export interface FlashFeatureData {
   guid: string
-  refFeature: Feature<Geometry>
+  refFeature: MapFeature
 }

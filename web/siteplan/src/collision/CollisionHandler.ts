@@ -10,7 +10,6 @@ import { getFeatureBoundArea } from '@/feature/FeatureInfo'
 import { Coordinate, isInstanceOfPosition, Position } from '@/model/Position'
 import { Feature } from 'ol'
 import { GeometryCollection, Polygon } from 'ol/geom'
-import Geometry from 'ol/geom/Geometry'
 import { getFeaturePosition, isFeaturesIntersect } from '../util/FeatureExtensions'
 import { transformPointWithAngle } from '../util/Math'
 import { getRectangleCenter, isLineIntersection, Line, Rectangle, translateRectangle } from './CollisionExtension'
@@ -28,14 +27,14 @@ export default class CollisionHandler {
   private relevantTrackFeatures: Line[][] = []
   private originalGeometry!: Rectangle[]
   private originalCoordinate!: Coordinate
-  private intersectFeatures: Feature<Geometry>[]
-  private bboxFeatures: Feature<Geometry>[]
-  private trackOutlineFeatures: Feature<Geometry>[]
+  private intersectFeatures: MapFeature[]
+  private bboxFeatures: MapFeature[]
+  private trackOutlineFeatures: MapFeature[]
   constructor (
     trackFeatures: Line[][],
-    bboxFeatures: Feature<Geometry>[],
-    trackOutlineFeautres: Feature<Geometry>[],
-    intersectFeatures: Feature<Geometry>[]
+    bboxFeatures: MapFeature[],
+    trackOutlineFeautres: MapFeature[],
+    intersectFeatures: MapFeature[]
   ) {
     this.trackFeatures = trackFeatures
     this.bboxFeatures = bboxFeatures
@@ -47,7 +46,7 @@ export default class CollisionHandler {
    * Get translate value to advoid collision
    * @returns translate value
    */
-  public getTranslateValue (moveFeature: Feature<Geometry>): number[] {
+  public getTranslateValue (moveFeature: MapFeature): number[] {
     this.originalGeometry = getFeatureBoundArea(moveFeature)
     this.relevantTrackFeatures = this.trackFeatures
 
@@ -76,15 +75,15 @@ export default class CollisionHandler {
     }
   }
 
-  private checkIntersectFeatureGroup (feature: Feature<Geometry>): boolean {
+  private checkIntersectFeatureGroup (feature: MapFeature): boolean {
     return this.intersectFeatures.some(x => isFeaturesIntersect(feature, x))
   }
 
-  private checkIntersectAnotherFeature (rectsPoinst: Feature<Geometry>): boolean {
+  private checkIntersectAnotherFeature (rectsPoinst: MapFeature): boolean {
     return this.bboxFeatures.some(x => isFeaturesIntersect(rectsPoinst, x))
   }
 
-  private checkIntersectTrackOutline (rectsPoinst: Feature<Geometry>, considerTrackWidth: boolean): boolean {
+  private checkIntersectTrackOutline (rectsPoinst: MapFeature, considerTrackWidth: boolean): boolean {
     if (!considerTrackWidth) {
       return false
     } else {
