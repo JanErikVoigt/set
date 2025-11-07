@@ -9,6 +9,7 @@
 package org.eclipse.set.feature.siteplan.transform;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.set.model.planpro.Signale.Signal;
@@ -46,9 +47,6 @@ class SignalInfo {
 	 * to any other mounts
 	 */
 	protected Signal_Befestigung getBaseMount() {
-		return mounts.stream()
-				.filter(sb -> sb == null)
-				.findFirst()
-				.orElse(null);
+		return mounts.stream().filter(Objects::isNull).findFirst().orElse(null);
 	}
 }
