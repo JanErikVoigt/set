@@ -66,3 +66,7 @@ org.sonarlint.eclipse.core.prefs
 
 # Temporary PlanPro-file unzip direcotry of JUnit tests
 **/res/toolbox
+
+#web about and news
+web/about
+web/news
