@@ -6,13 +6,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
  */
-package org.eclipse.set.feature.siteplan.transform
+package org.eclipse.set.feature.siteplan.transform;
 
-import java.util.Set
-import org.eclipse.set.model.planpro.Signale.Signal
-import org.eclipse.set.model.planpro.Signale.Signal_Befestigung
+import java.util.Set;
+import org.eclipse.set.model.planpro.Signale.Signal;
+import org.eclipse.set.model.planpro.Signale.Signal_Befestigung;
 
-import static extension org.eclipse.set.ppmodel.extensions.SignalBefestigungExtensions.*
 
 /**
  * Represents the full information for a given visualized siteplan signal
@@ -23,11 +22,11 @@ import static extension org.eclipse.set.ppmodel.extensions.SignalBefestigungExte
  *   connected to a signal  
  */
 class SignalInfo {
-	public Set<Signal> signals
+	public Set<Signal> signals;
 	public Set<Signal_Befestigung> mounts;
 	
-	def String getSignalGuid() {
-		val base = baseMount
+	private String getSignalGuid() {
+		Signal_Befestingung base = this.getBaseMount();
 		if(base !== null)
 			return base.identitaet?.wert
 		return firstSignal?.identitaet?.wert
