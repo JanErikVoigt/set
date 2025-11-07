@@ -26,13 +26,13 @@ class SignalInfo {
 	public Set<Signal_Befestigung> mounts;
 	
 	private String getSignalGuid() {
-		Signal_Befestingung base = this.getBaseMount();
-		if(base !== null)
-			return base.identitaet?.wert
-		return firstSignal?.identitaet?.wert
+		Signal_Befestigung base = this.getBaseMount();
+		if(base != null)
+			return base.getIdentitaet().getWert();
+		return firstSignal.getIdentitaet().getWert();
 	}
 	
-	def Signal getFirstSignal() 
+	protected Signal getFirstSignal() 
 	{
 		return signals.sortBy[identitaet.wert].head
 	}
@@ -41,8 +41,8 @@ class SignalInfo {
 	 * Returns the base mount. 
 	 * The base mount is a mount which is not attached to any other mounts 
 	 */
-	def Signal_Befestigung getBaseMount() {
-		return mounts.filter[signalBefestigung === null].head
+	private Signal_Befestigung getBaseMount() {
+		return mounts.stream().filter(sb -> sb == null).findFirst().orElse(null);
 	}
 	
 }
