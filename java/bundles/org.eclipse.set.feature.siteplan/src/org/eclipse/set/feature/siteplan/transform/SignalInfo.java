@@ -14,8 +14,6 @@ import java.util.Set;
 import org.eclipse.set.model.planpro.Signale.Signal;
 import org.eclipse.set.model.planpro.Signale.Signal_Befestigung;
 
-//TODO import static extension org.eclipse.set.ppmodel.extensions.SignalBefestigungExtensions.*
-
 /**
  * Represents the full information for a given visualized siteplan signal
  * 
@@ -53,5 +51,4 @@ class SignalInfo {
 				.findFirst()
 				.orElse(null);
 	}
-
 }
