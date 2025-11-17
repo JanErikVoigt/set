@@ -9,10 +9,9 @@
 
 import { FeatureType } from '@/feature/FeatureInfo'
 import { Label } from '@/model/Label'
-import { MountDirection, SignalRole } from '@/model/Signal'
+import { MountDirection, Signal, SignalRole } from '@/model/Signal'
 import { SignalMount, SignalMountType } from '@/model/SignalMount'
 import { ISvgElement, MAX_BRIDGE_DIRECTION_OFFSET, SvgBridgeSignal, ZusatzSignal } from '@/model/SvgElement'
-import { distance } from '@/util/Math'
 import SvgDraw from '@/util/SVG/Draw/SvgDraw'
 import SvgDrawBridge, { SignalBridgePart } from '@/util/SVG/Draw/SvgDrawBridge'
 import SvgDrawSingleSignal from '@/util/SVG/Draw/SvgDrawSingleSignal'
@@ -98,6 +97,27 @@ export default class SvgDrawSignal extends AbstractDrawSVG {
     return true
   }
 
+  private static getSignedOffset (signalMount: SignalMount, signal: Signal) {
+    const offset = {
+      x: signal.mountPosition.x - signalMount.position.x,
+      y: signal.mountPosition.y - signalMount.position.y
+    }
+
+    // direction unit vector from mount rotation (assuming rotation in radians)
+    const forward = {
+      x: Math.cos(signalMount.position.rotation),
+      y: Math.sin(signalMount.position.rotation)
+    }
+    // Right-orthogonal unit vector (rotate dir 90° clockwise)
+    const orthogonal = { x: -forward.y, y: forward.x }
+
+    // signed offset = projection of (dx,dy) on orthogonal
+    // (positive = right, negative = left — flip sign if needed)
+    const signedOffset = offset.x * orthogonal.x + offset.y * orthogonal.y
+
+    return signedOffset
+  }
+
   private getMultiSignalScreen (signalMount: SignalMount) {
     const bridgeParts: SignalBridgePart[] = []
     signalMount.attachedSignals.forEach(signal => {
@@ -106,10 +126,7 @@ export default class SvgDrawSignal extends AbstractDrawSVG {
           ? SvgDraw.getErrorSVG()
           : catalog.getSignalScreen(signal)
         if (screen !== null) {
-          const offset = distance(
-            [signalMount.position.x, signalMount.position.y],
-            [signal.mountPosition.x, signal.mountPosition.y]
-          )
+          const offset = SvgDrawSignal.getSignedOffset(signalMount,signal)
           const direction = Math.abs(
             signalMount.position.rotation - signal.mountPosition.rotation
           ) < MAX_BRIDGE_DIRECTION_OFFSET
@@ -117,11 +134,12 @@ export default class SvgDrawSignal extends AbstractDrawSVG {
             : MountDirection.Down
           bridgeParts.push({
             guid: signal.guid,
-            signal: SvgBridgeSignal.fromSvgElement(screen, offset, direction, signal.label ?? null)
+            signal: SvgBridgeSignal.fromSvgElement(screen, offset, direction, signal.label ?? undefined)
           })
         }
       }
     })
+
     return SvgDrawBridge.draw(signalMount.guid, bridgeParts, signalMount.mountType)
   }
 

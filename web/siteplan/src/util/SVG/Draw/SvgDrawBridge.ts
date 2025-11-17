@@ -42,14 +42,14 @@ export default class SvgDrawBridge {
     // Calculate the final bridge/boom width by finding the screens
     // with the largest absolute offset from the mount
     const signalOffsets = parts.map(ele => ele.signal.mountOffset * SvgDraw.SVG_OFFSET_SCALE_METER_TO_PIXEL_FACTOR)
-    const maxOffset = Math.max(...signalOffsets, 0)
-    const minOffset = Math.min(...signalOffsets, 0)
+    const leftX = Math.min(...signalOffsets,0)
+    const rightX = Math.max(...signalOffsets,0)
 
-    const width = SvgDrawBridge.SVG_BRIDGE_EXTRA_END_WIDTH + maxOffset - minOffset
+    const width = rightX - leftX + 2 * SvgDrawBridge.SVG_BRIDGE_EXTRA_END_WIDTH // duplicate code
     const svgWidth = width + SvgDrawSingleSignal.SVG_DRAWAREA
 
     const svg = SvgDraw.createSvgWithHead(svgWidth, SvgDrawSingleSignal.SVG_DRAWAREA)
-    const bridge = this.drawBridge(signalMountType, width)
+    const bridge = this.drawBridge(signalMountType, leftX, rightX)
     bridge.setAttribute('class', SignalPart.Mast)
     bridge.setAttribute('id', `${SignalPart.Mast}_${guid}`)
     const g = document.createElement('g')
@@ -75,12 +75,20 @@ export default class SvgDrawBridge {
     )
   }
 
-  private static drawBridge (signalMountType: SignalMountType, width: number) {
+  private static drawBridge (signalMountType: SignalMountType, leftX: number, rightX: number) {
+    // TODO assert(left_x < right_x)
+    const width = rightX - leftX + 2 * SvgDrawBridge.SVG_BRIDGE_EXTRA_END_WIDTH
+
     const kombination = document.createElement('g')
     const rect = document.createElement('rect')
     rect.setAttribute('width', width.toString())
     rect.setAttribute('height', '20')
     rect.setAttribute('y', '10')
+    rect.setAttribute('x', String(leftX - SvgDrawBridge.SVG_BRIDGE_EXTRA_END_WIDTH))
+    /* if (!towardsRight) {
+
+    } */
+
     rect.setAttribute('fill', 'white')
     kombination.appendChild(rect)
 
