@@ -54,7 +54,7 @@ export default class SvgDrawBridge {
     bridge.setAttribute('id', `${SignalPart.Mast}_${guid}`)
     const g = document.createElement('g')
     g.appendChild(bridge)
-    g.setTranslate(svgWidth / 2 - 5, SvgDrawSingleSignal.SVG_DRAWAREA_CENTER)
+    g.setTranslate(svgWidth / 2 - 5, SvgDrawSingleSignal.SVG_DRAWAREA_CENTER) // I dont get this
 
     for (const [, part] of parts.entries()) {
       try {
@@ -83,11 +83,8 @@ export default class SvgDrawBridge {
     const rect = document.createElement('rect')
     rect.setAttribute('width', width.toString())
     rect.setAttribute('height', '20')
-    rect.setAttribute('y', '10')
+    rect.setAttribute('y', '-10')
     rect.setAttribute('x', String(leftX - SvgDrawBridge.SVG_BRIDGE_EXTRA_END_WIDTH))
-    /* if (!towardsRight) {
-
-    } */
 
     rect.setAttribute('fill', 'white')
     kombination.appendChild(rect)
@@ -95,24 +92,24 @@ export default class SvgDrawBridge {
     const sw = SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH
     const line1 = document.createElement('path')
     line1.setAttribute('stroke-width', '5')
-    line1.setAttribute('d', `M${sw},10 L${sw},0`)
+    line1.setAttribute('d', `M${sw},20 L${sw},10`)
     kombination.appendChild(line1)
 
     const line2 = document.createElement('path')
     line2.setAttribute('stroke-width', '5')
-    line2.setAttribute('d', `M${sw},30 L${sw},40`)
+    line2.setAttribute('d', `M${sw},-20 L${sw},-10`)
     kombination.appendChild(line2)
 
     if (signalMountType === SignalMountType.Signalbruecke) {
       const x = width - sw
       const line3 = document.createElement('path')
       line3.setAttribute('stroke-width', '5')
-      line3.setAttribute('d', `M${x},10 L${x},0`)
+      line3.setAttribute('d', `M${x},20 L${x},10`)
       kombination.appendChild(line3)
 
       const line4 = document.createElement('path')
       line4.setAttribute('stroke-width', '5')
-      line4.setAttribute('d', `M${x},30 L${x},40`)
+      line4.setAttribute('d', `M${x},-20 L${x},-10`)
       kombination.appendChild(line4)
     }
 
@@ -153,7 +150,7 @@ export default class SvgDrawBridge {
 
   private static drawSignalMount (signalOffset: number, mountDirection: MountDirection): Element {
     const mount = document.createElement('path')
-    mount.setAttribute('d', 'M0,10 L0,-5')
+    mount.setAttribute('d', 'M0,0 L0,-25')
     if (mountDirection === MountDirection.Down) {
       mount.setTranslate(signalOffset + SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH, 0)
     } else {
@@ -174,8 +171,8 @@ export default class SvgDrawBridge {
     }
 
     if (signal.mountDirection === MountDirection.Down) {
-      const x = signalOffset + signalAnchorPointTop.x + SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH
-      const y = signalAnchorPointTop.y - 5
+      const x = signalOffset + signalAnchorPointTop.x// + SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH
+      const y = signalAnchorPointTop.y + 35 // why?
       // Flip the signal over, to preserve drawing orientation
       svg.setAttribute('transform', `translate(${x}, ${y}) rotate(180)`)
       signal.boundingBox.forEach(bbox => {
@@ -192,7 +189,7 @@ export default class SvgDrawBridge {
       })
     } else {
       const x = signalOffset - signalAnchorPointBot.x + SvgDrawBridge.SVG_BRIDGE_EXTRA_START_WIDTH
-      const y = signalAnchorPointBot.y - 5
+      const y = signalAnchorPointBot.y - 35
       svg.setAttribute('transform', `translate(${x}, ${y})`)
       signal.boundingBox.forEach(bbox => {
         if (!isEmpty(bbox)) {
